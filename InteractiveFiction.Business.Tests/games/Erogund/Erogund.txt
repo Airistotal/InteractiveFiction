@@ -1,0 +1,7 @@
+﻿Type:LOCATION
+
+Title:Erogund
+
+Description:This is the World of Erogund; a majority Feudal society with primitive technology.
+
+LocationType:Region
