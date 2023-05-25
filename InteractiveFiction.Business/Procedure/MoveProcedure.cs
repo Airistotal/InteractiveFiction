@@ -1,53 +1,82 @@
 ﻿using InteractiveFiction.Business.Entity;
-using InteractiveFiction.Business.Exceptions;
 using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Procedure.Argument;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InteractiveFiction.Business.Procedure
 {
-    public class MoveProcedure : BaseProcedure, IProcedure
+    public class MoveProcedure : IProcedure
     {
-        public Direction Direction { get; set; }
+        private readonly IEntity Agent;
+        private readonly Location Origin;
+        private Direction MoveDirection;
+
+        public MoveProcedure(IEntity agent)
+        {
+            Agent = agent;
+            Origin = agent.GetLocation();
+        }
 
         public void Perform()
         {
-            if (Agent == null)
+            CheckOrigin();
+
+            if (MoveDirection == Direction.NULL)
             {
-                throw new NullAgentException("Can't move if nothing is moving.");
+                Agent.AddEvent($"Without a direction, you can't go anywhere. {Origin.GetDirections()}");
+                return;
             }
 
-            if (Target is Location location && Agent is BaseEntity baseAgent)
+            var destination = Origin.Go(MoveDirection);
+            if (destination.Type == LocationType.NULL)
             {
-                if (!location.Children.Contains(Agent))
-                {
-                    throw new MoveException("Unable to move agent if it isn't in the right location.");
-                }
+                AddNoMoveEvent();
+                return;
+            }
 
-                var destination = location.Go(Direction);
-                if (destination.Type == LocationType.NULL)
-                {
-                    return;
-                }
+            destination.Children.Add(Agent);
+            Origin.Children.Remove(Agent);
+            Agent.SetLocation(destination);
+            AddMoveEvent(destination);
+        }
 
-                destination.Children.Add(Agent);
-                location.Children.Remove(Agent);
-                baseAgent.Location = destination;
-            } else
+        [MemberNotNull(nameof(Origin))]
+        private void CheckOrigin()
+        {
+            if (Origin == null)
             {
-                throw new MoveException("Can't move if the target isn't a location.");
+                throw new ProcedureException("Unable to move if the target isn't a location.");
+            }
+
+            if (!Origin.Children.Contains(Agent))
+            {
+                throw new ProcedureException("Unable to move agent if it isn't in the right location.");
             }
         }
 
-        public IProcedure With<T>(T[] args)
+        private void AddMoveEvent(Location destination)
         {
-            if (args != null && args.Length == 1 && args[0] is Direction direction)
-            {
-                Direction = direction;
+            Agent.AddEvent($"You have moved {MoveDirection}.{Environment.NewLine}{Environment.NewLine}{destination.GetFullDescription()}");
+        }
 
-                return this;
+        private void AddNoMoveEvent()
+        {
+            CheckOrigin();
+
+            Agent.AddEvent($"You can't go {MoveDirection}. {Origin.GetDirections()}");
+        }
+
+        public IProcedure With(List<IProcedureArg> args)
+        {
+            if (args != null && args.Count == 1 && args[0] is MoveArg mvArg)
+            {
+                MoveDirection = mvArg.Direction;
             } else
             {
-                throw new ArgumentException("Unable to move without direction");
+                MoveDirection = Direction.NULL;
             }
+
+            return this;
         }
     }
 }

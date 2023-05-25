@@ -1,4 +1,5 @@
 ﻿using InteractiveFiction.Business.Procedure;
+using InteractiveFiction.Business.Procedure.Argument;
 
 namespace InteractiveFiction.Business.Tests.Procedure
 {
@@ -9,7 +10,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
         {
             var sut = new NullProcedure();
 
-            sut.With(new[] { "" }).Perform();
+            sut.With(new List<IProcedureArg>()).Perform();
         }
     }
 }

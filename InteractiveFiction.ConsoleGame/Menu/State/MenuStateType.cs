@@ -6,6 +6,7 @@
         NewGame = 2,
         LoadGame = 3,
         CharacterSelect = 4,
-        NewGameName = 5
+        NewGameName = 5,
+        CreateCharacter = 6
     }
 }

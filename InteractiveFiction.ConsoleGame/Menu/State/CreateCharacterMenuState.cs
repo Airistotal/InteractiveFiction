@@ -19,25 +19,19 @@ namespace InteractiveFiction.ConsoleGame.Menu.State
 
         public string GetScreen()
         {
-            return textLoader.GetText("menu:new_character:character_name_prompt");
+            return textLoader.GetText("menu.new_character.character_name_prompt");
         }
 
         public IMenuState Transition(Command command, params string[] values)
         {
-            switch (command)
+            if (values == null || values.Length == 0 || string.IsNullOrWhiteSpace(values[0]))
             {
-                case Command.ACTION1:
-                    if (values == null || values.Length == 0 || string.IsNullOrWhiteSpace(values[0]))
-                    {
-                        return this;
-                    }
-
-                    messageBus.Publish(new CharacterNameSelected() { Name = values[0] });
-
-                    return menuStateFactory.GetInstance(MenuStateType.MainMenu);
-                default:
-                    return this;
+                return this;
             }
+
+            messageBus.Publish(new CharacterInfoSelected() { Name = values[0] });
+
+            return menuStateFactory.GetInstance(MenuStateType.MainMenu);
         }
     }
 }

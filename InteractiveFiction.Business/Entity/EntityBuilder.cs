@@ -1,4 +1,5 @@
 ﻿using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.Business.Entity
@@ -8,10 +9,12 @@ namespace InteractiveFiction.Business.Entity
         private IEnumerable<string> lines = new List<string>();
         private EntityType type;
         private readonly IProcedureBuilder procedureBuilder;
+        private readonly ITextDecorator textDecorator;
 
-        public EntityBuilder(IProcedureBuilder procedureBuilder)
+        public EntityBuilder(IProcedureBuilder procedureBuilder, ITextDecorator textDecorator)
         {
             this.procedureBuilder = procedureBuilder;
+            this.textDecorator = textDecorator;
         }
 
         public IEntityBuilder FromLines(IEnumerable<string> lines)
@@ -43,7 +46,7 @@ namespace InteractiveFiction.Business.Entity
 
         private Character MakeCharacter()
         {
-            var character = new Character(procedureBuilder);
+            var character = new Character(procedureBuilder, textDecorator);
 
             foreach (var line in lines)
             {
@@ -103,15 +106,29 @@ namespace InteractiveFiction.Business.Entity
                     case "Groundedness":
                         character.Groundedness = int.Parse(value);
                         break;
+                    case "DefaultCapabilities":
+                        AddCapabilities(character, value);
+                        break;
                 }
             }
 
             return character;
         }
 
+        private static void AddCapabilities(Character character, string value)
+        {
+            var procedureTypes = value.Split(",");
+
+            foreach (var procedureName in procedureTypes)
+            {
+                var procedureType = Enum.Parse<ProcedureType>(procedureName);
+                character.AddCapability(procedureType);
+            }
+        }
+
         private Location MakeLocation()
         {
-            var location = new Location(procedureBuilder);
+            var location = new Location(textDecorator);
 
             foreach (var line in lines)
             {

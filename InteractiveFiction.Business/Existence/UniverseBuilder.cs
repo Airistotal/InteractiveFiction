@@ -2,19 +2,20 @@
 
 namespace InteractiveFiction.Business.Existence
 {
-    public class UniverseLoader : IUniverseLoader
+    public class UniverseBuilder : IUniverseBuilder
     {
         private Location? root;
+        private Location? spawn;
         private string? baseDir;
         private readonly Dictionary<string, Location> loadedLocations = new();
         private readonly IEntityBuilderFactory entityBuilderFactory;
 
-        public UniverseLoader(IEntityBuilderFactory entityBuilderFactory)
+        public UniverseBuilder(IEntityBuilderFactory entityBuilderFactory)
         {
             this.entityBuilderFactory = entityBuilderFactory;
         }
 
-        public Universe Create(string name)
+        public IUniverse Create(string name)
         {
             baseDir = "./games/" + name;
             if (!Directory.Exists(baseDir))
@@ -25,10 +26,14 @@ namespace InteractiveFiction.Business.Existence
             root = LoadLocationFromFile(name);
 
             LoadMap();
+            if (spawn == null)
+            {
+                throw new NoSpawnSetException();
+            }
 
             root.Children.AddRange(loadedLocations.Values);
 
-            return new Universe(root);
+            return new Universe(spawn);
         }
 
         private void LoadMap()
@@ -37,12 +42,13 @@ namespace InteractiveFiction.Business.Existence
 
             foreach (string[] mapInfo in mapInfos)
             {
-                var originName = mapInfo[0];
-                var destinations = mapInfo[1].Split(',');
+                var origin = LoadLocation(mapInfo[0]);
+                if (mapInfo[0].Equals("Spawn"))
+                {
+                    spawn = origin;
+                }
 
-                var origin = LoadLocation(originName);
-
-                foreach (var destinationInfo in destinations)
+                foreach (var destinationInfo in mapInfo[1].Split(','))
                 {
                     var split = destinationInfo.Split(";");
                     var direction = (Direction)Enum.Parse(typeof(Direction), split[0]);
@@ -89,7 +95,7 @@ namespace InteractiveFiction.Business.Existence
             }
 
             var location = (Location)entityBuilderFactory.GetBuilder().FromLines(File.ReadLines(fileLocation)).Build();
-            location.Location = root;
+
             LoadEntities(location);
 
             return location;

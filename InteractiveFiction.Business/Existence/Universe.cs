@@ -5,13 +5,13 @@ namespace InteractiveFiction.Business.Existence
 {
     public class Universe : IUniverse
     {
-        private readonly IEntity root;
+        private readonly Location spawn;
         private readonly List<IProcedure> stack = new();
         private readonly List<ILaw> laws = new();
 
-        public Universe(IEntity root)
+        public Universe(Location spawn)
         {
-            this.root = root;
+            this.spawn = spawn;
         }
 
         public void RegisterLaw(ILaw law)
@@ -41,7 +41,15 @@ namespace InteractiveFiction.Business.Existence
 
         public Instant GetInstant()
         {
-            return new Instant(root);
+            return new Instant(spawn);
+        }
+
+        public void Spawn(IEntity entity)
+        {
+            entity.SetLocation(spawn);
+            entity.SetUniverse(this);
+            entity.AddEvent($"{spawn.GetFullDescription()}");
+            spawn.Children.Add(entity);
         }
     }
 }

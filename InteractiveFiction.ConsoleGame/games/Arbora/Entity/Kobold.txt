@@ -1,0 +1,19 @@
+﻿Type:CHARACTER
+
+Name:Kobold
+Description:A Kobold
+Birthdate:Unknown
+Parents:
+Children:
+Health:2400
+Strength:12
+Speed:12
+Dexterity:13
+Endurance:15
+Restraint:1
+Discretion:1
+Courage:1
+Fairness:1
+Compassion:1
+Hope:1
+Groundedness:1

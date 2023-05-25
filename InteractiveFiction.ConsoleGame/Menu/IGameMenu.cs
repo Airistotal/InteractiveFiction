@@ -3,6 +3,6 @@
     public interface IGameMenu
     {
         string GetScreen();
-        void Perform(Command command);
+        void Perform(string input);
     }
 }

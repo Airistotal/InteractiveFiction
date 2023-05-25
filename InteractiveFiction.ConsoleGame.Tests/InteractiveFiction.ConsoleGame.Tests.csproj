@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleGame\InteractiveFiction.ConsoleGame.csproj" />
     <ProjectReference Include="..\InteractiveFiction.Business\InteractiveFiction.Business.csproj" />
     <ProjectReference Include="..\InteractiveFiction.ConsoleGame\InteractiveFiction.ConsoleGame.csproj" />
   </ItemGroup>

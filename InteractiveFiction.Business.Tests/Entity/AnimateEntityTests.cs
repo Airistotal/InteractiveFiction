@@ -1,6 +1,7 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
+using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
@@ -11,7 +12,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenAnimateEntityCreatedHasPhysicalAttributes()
         {
-            var sut = new TestAnimateEntity();
+            var sut = GetAnimateEntity();
 
             Assert.Equal(0, sut.Health);
             Assert.Equal(0, sut.Strength);
@@ -23,7 +24,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenAnimateEntityCreatedHasMentalAttributes()
         {
-            var sut = new TestAnimateEntity();
+            var sut = GetAnimateEntity();
 
             Assert.Equal(0, sut.Restraint);
             Assert.Equal(0, sut.Discretion);
@@ -37,27 +38,25 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenAnimateEntityCreatedHasIdentityAttributes()
         {
-            var sut = new TestAnimateEntity();
+            var sut = GetAnimateEntity();
 
             Assert.Equal("", sut.Name);
             Assert.Equal("", sut.Description);
             Assert.Equal("", sut.Birthdate);
             Assert.Empty(sut.Parents);
             Assert.Empty(sut.Children);
-            Assert.Null(sut.Location);
+            Assert.Equal(NullLocation.Instance, sut.Location);
         }
         [Fact]
         public void WhenAnimateEntityMovesWithLocationPutsProcedureIntoUniverse()
         {
             var universe = new Mock<IUniverse>();
             universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
-            var sut = new TestAnimateEntity()
-            {
-                Universe = universe.Object,
-            };
-            sut.SetLocation(Location.Empty());
+            var sut = GetAnimateEntity();
+            sut.Universe = universe.Object;
+            sut.SetLocation(NullLocation.Instance);
 
-            sut.Perform(ProcedureType.Move, new[] { "" });
+            sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
 
             universe.Verify(_ => _.Put(It.IsAny<IProcedure>()), Times.Once);
         }
@@ -66,13 +65,11 @@ namespace InteractiveFiction.Business.Tests.Entity
         public void WhenAnimateEntityMovesWithoutLocationIgnores()
         {
             var universe = new Mock<IUniverse>();
-            var sut = new TestAnimateEntity()
-            {
-                Universe = universe.Object,
-            };
             universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
+            var sut = GetAnimateEntity();
+            sut.Universe = universe.Object;
 
-            sut.Perform(ProcedureType.Move, new[] { "" });
+            sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
 
             universe.Verify(_ => _.Put(It.IsAny<IProcedure>()), Times.Never);
         }
@@ -80,13 +77,29 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenAnimateEntityChangesLocationUpdatesMoveProcedure()
         {
-            var sut = new TestAnimateEntity();
-            var location2 = new Location(DefaultMocks.GetProcedureBuilderMock().Object);
+            var sut = GetAnimateEntity();
+            var location = GetLocation("fdsa");
+            var location2 = GetLocation("zcxv");
 
-            sut.SetLocation(Location.Empty());
+            sut.SetLocation(location);
             sut.SetLocation(location2);
 
-            sut.builderMock.Verify(_ => _.target(location2), Times.Once);
+            Assert.Equal(location2, sut.Location);
+        }
+
+        private AnimateEntity GetAnimateEntity()
+        {
+            return new Mock<AnimateEntity>(
+                DefaultMocks.GetProcedureBuilderMock().Object,
+                DefaultMocks.GetTextDecorator().Object).Object;
+        }
+
+        private Location GetLocation(string Title)
+        {
+            return new Location(DefaultMocks.GetTextDecorator().Object) 
+            { 
+                Title = Title 
+            };
         }
     }
 }

@@ -18,7 +18,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         }
 
         [Fact]
-        public void When_CreateCharacterAction1_NoName_ReturnsSelf()
+        public void When_CreateCharacterAnyAction_NoName_ReturnsSelf()
         {
             var sut = GetCreateCharacterMenuState();
 
@@ -28,7 +28,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         }
 
         [Fact]
-        public void When_CreateCharacterAction1_EmptyName_ReturnsSelf()
+        public void When_CreateCharacterAnyAction_EmptyName_ReturnsSelf()
         {
             var sut = GetCreateCharacterMenuState();
 
@@ -38,7 +38,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         }
 
         [Fact]
-        public void When_CreateCharacterAction1_TransitionsToMainMenu()
+        public void When_CreateCharacterAnyAction_TransitionsToMainMenu()
         {
             var menuStateFactory = new Mock<IMenuStateFactory>();
             var sut = GetCreateCharacterMenuState(menuStateFactory);
@@ -49,7 +49,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         }
 
         [Fact]
-        public void When_CreateCharacterAction1_SendsSelectionEvent()
+        public void When_CreateCharacterAnyAction_SendsSelectionEvent()
         {
             var messageBus = new Mock<IMessageBus>();
             var sut = GetCreateCharacterMenuState(messageBus: messageBus);
@@ -57,7 +57,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
             var transition = sut.Transition(Command.ACTION1, "Character 1");
 
             messageBus.Verify(_ => _.Publish(
-                It.Is<CharacterNameSelected>(_ => _.Name.Equals("Character 1"))), Times.Once);
+                It.Is<CharacterInfoSelected>(_ => _.Name.Equals("Character 1"))), Times.Once);
         }
 
         private static CreateCharacterMenuState GetCreateCharacterMenuState(
@@ -70,7 +70,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
             }
 
             var textLoader = new Mock<ITextLoader>();
-            textLoader.Setup(_ => _.GetText("menu:new_character:character_name_prompt")).Returns("Enter character name:");
+            textLoader.Setup(_ => _.GetText("menu.new_character.character_name_prompt")).Returns("Enter character name:");
 
             if (messageBus == null)
             {

@@ -1,15 +1,41 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Microsoft.Extensions.Hosting;
+using InteractiveFiction.Business.Infrastructure;
+using InteractiveFiction.ConsoleGame;
+using InteractiveFiction.ConsoleGame.Menu;
+using InteractiveFiction.ConsoleGame.Sanitize.Argument;
+using InteractiveFiction.ConsoleGame.Sanitize.Commands;
+using Microsoft.Extensions.DependencyInjection;
 
-Console.WriteLine("Hello, World!");
+Console.Title = "Interactive Fiction";
 
-var builder = Host.CreateDefaultBuilder(args);
+var serviceProvider = new ServiceCollection()
+    .AddLogging()
+    .AddInteractiveFictionBusiness()
+    .AddSingleton<IGameMenu, GameMenu>()
+    .AddSingleton<IMenuStateFactory, MenuStateFactory>()
+    .AddSingleton<ICommandParser, MenuCommandParser>()
+    .AddSingleton<IConsoleGameRunner, ConsoleGameRunner>()
+    .AddSingleton<IGameContainer, GameContainer>()
+    .AddSingleton<IProcedureCommandParser, ProcedureCommandParser>()
+    .AddSingleton<IArgParserFactory, ArgParserFactory>()
+    .AddSingleton<ITextDecorator, ConsoleTextDecorator>()
+    .BuildServiceProvider();
 
-//builder.ConfigureServices(
-//    services =>
-//        services.AddHostedService<Worker>()
-//            .AddScoped<IMessageWriter, MessageWriter>());
+var gameRunner = serviceProvider.GetService<IConsoleGameRunner>();
+if (gameRunner == null)
+{
+    throw new Exception("Unable to start game with null runner.");
+}
 
-using var host = builder.Build();
-
-host.Start();
+while (true)
+{
+    Console.WriteLine(gameRunner.GetScreen());
+    Console.Write(">> ");
+    var command = Console.ReadLine();
+    Console.Clear();
+    if (!string.IsNullOrEmpty(command))
+    {
+        gameRunner.Perform(command);
+        gameRunner.Tick();
+    }
+}

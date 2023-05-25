@@ -1,7 +1,7 @@
 ﻿using InteractiveFiction.Business.Entity;
-using InteractiveFiction.Business.Exceptions;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
+using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
@@ -10,97 +10,66 @@ namespace InteractiveFiction.Business.Tests.Procedure
     public class MoveProcedureTests
     {
         [Fact]
-        public void WhenMoveToExistingLocationGoesToOtherLocation()
+        public void WhenMove_WithDestination_CanMove()
         {
-            var move = GetMoveProcedure();
+            var harness = new MoveProcedureTestHarness()
+                .WithDestination(Direction.North);
 
-            move.With(new[] { Direction.North }).Perform();
+            harness.PerformMoveWithArg();
 
-            Assert.NotNull(move.Target);
-            Assert.NotNull(move.Agent);
-
-            if (move.Target != null && move.Agent != null)
-            {
-                Location oldLocation = (Location)move.Target;
-                Location newLocation = oldLocation.Go(Direction.North);
-                AnimateEntity agent = (AnimateEntity)move.Agent;
-                Assert.DoesNotContain(move.Agent, oldLocation.Children);
-                Assert.Contains(move.Agent, newLocation.Children);
-                Assert.Equal(newLocation, agent.Location);
-            }
+            harness.AssertMoved();
         }
 
         [Fact]
-        public void WhenMoveToNullLocationCantGo()
+        public void WhenMove_WithoutDestination_CantMove()
         {
-            var move = GetMoveProcedure();
-            var target = move.Target as Location;
-            target?.DestroyPath(Direction.North);
+            var harness = new MoveProcedureTestHarness()
+                .WithoutDestination(Direction.North);
 
-            move.With(new[] { Direction.North }).Perform();
+            harness.PerformMoveWithArg();
 
-            Assert.Contains(move.Agent, target?.Children);
+            harness.AssertUnmoved();
         }
 
         [Fact]
-        public void WhenMoveNotInLocationThrowsException()
+        public void WhenMove_WithoutDirection_CantMove()
         {
-            var move = GetMoveProcedure();
-            var target = move.Target as Location;
-            if (move.Agent != null)
-            {
-                target?.Children.Remove(move.Agent);
-            }
+            var harness = new MoveProcedureTestHarness()
+                .WithDestination(Direction.NULL);
 
-            Assert.Throws<MoveException>(() => move.With(new[] { Direction.North }).Perform());
+            harness.PerformMoveWithArg();
+
+            harness.AssertUnmoved();
         }
 
         [Fact]
-        public void WhenMoveTargetIsntLocationThrowsException()
+        public void WhenMoveAgentNotInLocationThrowsException()
         {
-            var move = GetMoveProcedure();
-            move.Target = new Mock<IEntity>().Object;
+            var harness = new MoveProcedureTestHarness()
+                .WithDestination(Direction.North)
+                .WithoutAgent();
 
-            Assert.Throws<MoveException>(() => move.With(new[] { Direction.North }).Perform());
+            Assert.Throws<ProcedureException>(() => harness.PerformMoveWithArg());
         }
 
         [Fact]
-        public void WhenMoveAgentIsNullThrowsException()
+        public void WhenMove_WithoutOriginThrowsProcedureException()
         {
-            var move = GetMoveProcedure();
-            move.Agent = null;
+            var harness = new MoveProcedureTestHarness()
+                .WithDestination(Direction.North)
+                .WithoutAgent();
 
-            Assert.Throws<NullAgentException>(() => move.With(new[] { Direction.North }).Perform());
+            Assert.Throws<ProcedureException>(() => harness.PerformMoveWithArg(false));
         }
 
         [Fact]
-        public void WhenMoveArgIsntDirectionThrowsException()
+        public void WhenMove_WithNoMoveArg_ThrowsProcedureException()
         {
-            var move = GetMoveProcedure();
+            var harness = new MoveProcedureTestHarness()
+                .WithDestination(Direction.North)
+                .WithoutAgent();
 
-            Assert.Throws<ArgumentException>(() => move.With(new[] { "" }).Perform());
+            Assert.Throws<ProcedureException>(() => harness.PerformMoveWithArg(false));
         }
-
-        private static MoveProcedure GetMoveProcedure()
-        {
-            var location = new Location(DefaultMocks.GetProcedureBuilderMock().Object)
-            {
-                Title = "Location"
-            };
-            var otherLocation = new Location(DefaultMocks.GetProcedureBuilderMock().Object)
-            {
-                Title = "Other Location"
-            };
-
-            location.AddPath(Direction.North, otherLocation);
-            var entity = new TestAnimateEntity();
-            location.Children.Add(entity);
-
-            return new MoveProcedure()
-            {
-                Agent = entity,
-                Target = location,
-            };
-        }
-    } 
+    }
 }

@@ -15,7 +15,7 @@ namespace InteractiveFiction.ConsoleGame.Menu.State
 
         public string GetScreen()
         {
-            return textLoader.GetText("menu:idle");
+            return textLoader.GetText("menu.idle");
         }
 
         public IMenuState Transition(Command command, params string[] values)

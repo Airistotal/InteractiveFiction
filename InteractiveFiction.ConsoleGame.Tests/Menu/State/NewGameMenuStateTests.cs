@@ -54,7 +54,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
                 .Returns(new List<GameArchetype> { new GameArchetype() { Name = "Game 1" } });
 
             var textLoader = new Mock<ITextLoader>();
-            textLoader.Setup(_ => _.GetText("menu:new_game:option_template")).Returns("{0}) {1}");
+            textLoader.Setup(_ => _.GetText("menu.new_game.option_template")).Returns("{0}) {1}");
 
             if (messageBus == null)
             {

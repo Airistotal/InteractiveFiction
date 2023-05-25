@@ -23,7 +23,9 @@ namespace InteractiveFiction.ConsoleGame.Menu
             {
                 MenuStateType.MainMenu => new MainMenuState(this, textLoader),
                 MenuStateType.NewGame => new NewGameMenuState(this, messageBus, textLoader, gameArchetypeLoader),
+                MenuStateType.NewGameName => new NewGameNameMenuState(this, messageBus, textLoader),
                 MenuStateType.LoadGame => new LoadGameMenuState(),
+                MenuStateType.CreateCharacter => new CreateCharacterMenuState(this, messageBus, textLoader),
                 MenuStateType.CharacterSelect => new CharacterSelectMenuState(),
                 _ => throw new Exception("Unable to create MenuState " + type),
             };
