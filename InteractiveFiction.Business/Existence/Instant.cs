@@ -1,4 +1,4 @@
-﻿using InteractiveFiction.Business.Entity;
+﻿using InteractiveFiction.Business.Entity.Locations;
 
 namespace InteractiveFiction.Business.Existence
 {

@@ -1,11 +1,12 @@
-﻿using InteractiveFiction.Business.Entity;
+﻿using InteractiveFiction.Business.Entity.AnimateEntities;
+using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
-namespace InteractiveFiction.Business.Tests.Entity
+namespace InteractiveFiction.Business.Tests.Entity.AnimateEntities
 {
     public class AnimateEntityTests
     {
@@ -96,9 +97,9 @@ namespace InteractiveFiction.Business.Tests.Entity
 
         private Location GetLocation(string Title)
         {
-            return new Location(DefaultMocks.GetTextDecorator().Object) 
-            { 
-                Title = Title 
+            return new Location(DefaultMocks.GetTextDecorator().Object)
+            {
+                Title = Title
             };
         }
     }

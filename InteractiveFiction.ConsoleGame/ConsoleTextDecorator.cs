@@ -24,12 +24,61 @@ namespace InteractiveFiction.ConsoleGame
 
         private static string GetAnsiColor(Color color)
         {
-            if (color == System.Drawing.Color.Red)
+            if (color == System.Drawing.Color.Black)
+            {
+                return AnsiEscape.BLACK;
+            }
+            else if (color == System.Drawing.Color.Red)
             {
                 return AnsiEscape.RED;
-            } else if (color == System.Drawing.Color.Blue)
+            } 
+            else if (color == System.Drawing.Color.Blue)
             {
                 return AnsiEscape.BLUE;
+            }
+            else if (color == System.Drawing.Color.Yellow)
+            {
+                return AnsiEscape.YELLOW;
+            }
+            else if (color == System.Drawing.Color.Green)
+            {
+                return AnsiEscape.GREEN;
+            }
+            else if (color == System.Drawing.Color.Purple)
+            {
+                return AnsiEscape.PURPLE;
+            }
+            else if (color == System.Drawing.Color.LightBlue)
+            {
+                return AnsiEscape.LIGHTBLUE;
+            }
+            else if (color == System.Drawing.Color.Gray)
+            {
+                return AnsiEscape.GREY;
+            }
+            else if (color == System.Drawing.Color.Salmon)
+            {
+                return AnsiEscape.SALMON;
+            }
+            else if (color == System.Drawing.Color.LightGreen)
+            {
+                return AnsiEscape.LIGHTGREEN;
+            }
+            else if (color == System.Drawing.Color.LightYellow)
+            {
+                return AnsiEscape.LIGHTYELLOW;
+            }
+            else if (color == System.Drawing.Color.MediumBlue)
+            {
+                return AnsiEscape.MEDBLUE;
+            }
+            else if (color == System.Drawing.Color.RebeccaPurple)
+            {
+                return AnsiEscape.ROYALPURPLE;
+            }
+            else if (color == System.Drawing.Color.SkyBlue)
+            {
+                return AnsiEscape.SKYBLUE;
             }
 
             return "";
@@ -44,6 +93,50 @@ namespace InteractiveFiction.ConsoleGame
             else if (color == System.Drawing.Color.Blue)
             {
                 return AnsiEscape.BLUEHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.Yellow)
+            {
+                return AnsiEscape.YELLOWHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.Green)
+            {
+                return AnsiEscape.GREENHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.Purple)
+            {
+                return AnsiEscape.PURPLEHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.LightBlue)
+            {
+                return AnsiEscape.LIGHTBLUEHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.Gray)
+            {
+                return AnsiEscape.GREYHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.Salmon)
+            {
+                return AnsiEscape.SALMONHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.LightGreen)
+            {
+                return AnsiEscape.LIGHTGREENHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.LightYellow)
+            {
+                return AnsiEscape.LIGHTYELLOWHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.MediumBlue)
+            {
+                return AnsiEscape.MEDBLUEHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.RebeccaPurple)
+            {
+                return AnsiEscape.ROYALPURPLEHIGHLIGHT;
+            }
+            else if (color == System.Drawing.Color.SkyBlue)
+            {
+                return AnsiEscape.SKYBLUEHIGHLIGHT;
             }
 
             return "";

@@ -1,6 +1,6 @@
 ﻿using InteractiveFiction.Business.Existence;
 
-namespace InteractiveFiction.Business.Entity
+namespace InteractiveFiction.Business.Entity.Locations
 {
     public class NullLocation : Location
     {
