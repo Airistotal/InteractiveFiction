@@ -1,8 +1,5 @@
 ﻿using InteractiveFiction.Business.Entity.AnimateEntities;
 using InteractiveFiction.Business.Entity.Locations;
-using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
@@ -48,59 +45,10 @@ namespace InteractiveFiction.Business.Tests.Entity.AnimateEntities
             Assert.Empty(sut.Children);
             Assert.Equal(NullLocation.Instance, sut.Location);
         }
-        [Fact]
-        public void WhenAnimateEntityMovesWithLocationPutsProcedureIntoUniverse()
-        {
-            var universe = new Mock<IUniverse>();
-            universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
-            var sut = GetAnimateEntity();
-            sut.Universe = universe.Object;
-            sut.SetLocation(NullLocation.Instance);
-
-            sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
-
-            universe.Verify(_ => _.Put(It.IsAny<IProcedure>()), Times.Once);
-        }
-
-        [Fact]
-        public void WhenAnimateEntityMovesWithoutLocationIgnores()
-        {
-            var universe = new Mock<IUniverse>();
-            universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
-            var sut = GetAnimateEntity();
-            sut.Universe = universe.Object;
-
-            sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
-
-            universe.Verify(_ => _.Put(It.IsAny<IProcedure>()), Times.Never);
-        }
-
-        [Fact]
-        public void WhenAnimateEntityChangesLocationUpdatesMoveProcedure()
-        {
-            var sut = GetAnimateEntity();
-            var location = GetLocation("fdsa");
-            var location2 = GetLocation("zcxv");
-
-            sut.SetLocation(location);
-            sut.SetLocation(location2);
-
-            Assert.Equal(location2, sut.Location);
-        }
 
         private AnimateEntity GetAnimateEntity()
         {
-            return new Mock<AnimateEntity>(
-                DefaultMocks.GetProcedureBuilderMock().Object,
-                DefaultMocks.GetTextDecorator().Object).Object;
-        }
-
-        private Location GetLocation(string Title)
-        {
-            return new Location(DefaultMocks.GetTextDecorator().Object)
-            {
-                Title = Title
-            };
+            return new Mock<AnimateEntity>(DefaultMocks.GetProcedureBuilderMock().Object).Object;
         }
     }
 }

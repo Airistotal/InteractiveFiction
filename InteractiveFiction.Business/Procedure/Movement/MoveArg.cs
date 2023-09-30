@@ -1,6 +1,6 @@
 ﻿using InteractiveFiction.Business.Existence;
 
-namespace InteractiveFiction.Business.Procedure.Argument
+namespace InteractiveFiction.Business.Procedure.Movement
 {
     public class MoveArg : IProcedureArg
     {

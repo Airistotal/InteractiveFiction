@@ -1,18 +1,18 @@
 ﻿using InteractiveFiction.Business.Entity;
+using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
 namespace InteractiveFiction.Business.Tests.Entity
 {
-    public class BaseEntityTests
+    public class BaseAgentTests
     {
         [Fact]
         public void WhenUniverseEntityDoesProcedureWithoutUniverseThrowsException()
         {
-            var sut = GetBaseEntity();
+            var sut = GetAgent();
 
             Assert.Throws<Exception>(() => sut.Perform(ProcedureType.Move, new List<IProcedureArg>()));
         }
@@ -22,7 +22,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         {
             var universe = new Mock<IUniverse>();
             universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
-            var sut = GetBaseEntity();
+            var sut = GetAgent();
             sut.Universe = universe.Object;
 
             sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
@@ -35,7 +35,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         {
             var universe = new Mock<IUniverse>();
             universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
-            var sut = GetBaseEntity();
+            var sut = GetAgent();
             sut.Universe = universe.Object;
             sut.AddCapability(ProcedureType.Move);
             sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
@@ -46,7 +46,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenAddCapabilityWithoutProcedureBuilderThrowsException()
         {
-            var sut = new Mock<BaseEntity>(null, null);
+            var sut = new Mock<BaseAgent>(null);
 
             Assert.Throws<Exception>(() => sut.Object.AddCapability(ProcedureType.Move));
         }
@@ -55,7 +55,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         public void WhenAddEvent_AddsToNewEvents()
         {
             var evt = "text";
-            var sut = GetBaseEntity();
+            var sut = GetAgent();
 
             sut.AddEvent(evt);
             var events = sut.GetNewEvents();
@@ -67,7 +67,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         public void WhenArchiveEvents_RemovesEvents()
         {
             var evt = "text";
-            var sut = GetBaseEntity();
+            var sut = GetAgent();
 
             sut.AddEvent(evt);
             sut.ArchiveEvents();
@@ -78,7 +78,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenPerformProcedure_NotFound_AddsEvent()
         {
-            var sut = GetBaseEntity();
+            var sut = GetAgent();
             sut.Universe = new Mock<IUniverse>().Object;
 
             sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
@@ -86,11 +86,30 @@ namespace InteractiveFiction.Business.Tests.Entity
             Assert.Contains(sut.GetNewEvents(), _ => _.Contains("You can't"));
         }
 
-        private BaseEntity GetBaseEntity()
+        [Fact]
+        public void WhenAgentChangesLocation_UpdatesLocation()
         {
-            return new Mock<BaseEntity>(
-                DefaultMocks.GetProcedureBuilderMock().Object,
-                DefaultMocks.GetTextDecorator().Object).Object;
+            var sut = GetAgent();
+            var location = GetLocation("fdsa");
+            var location2 = GetLocation("zcxv");
+
+            sut.SetLocation(location);
+            sut.SetLocation(location2);
+
+            Assert.Equal(location2, sut.Location);
+        }
+
+        private static BaseAgent GetAgent()
+        {
+            return new Mock<BaseAgent>(DefaultMocks.GetProcedureBuilderMock().Object).Object;
+        }
+
+        private static Location GetLocation(string Title)
+        {
+            return new Location(DefaultMocks.GetTextDecorator().Object)
+            {
+                Title = Title
+            };
         }
     }
 }

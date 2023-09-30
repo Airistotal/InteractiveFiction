@@ -8,6 +8,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Argument
         [Theory]
         [InlineData(ProcedureType.Move, typeof(MoveArgParser))]
         [InlineData(ProcedureType.Look, typeof(LookArgParser))]
+        [InlineData(ProcedureType.Attack, typeof(AttackArgParser))]
         [InlineData(ProcedureType.NULL, typeof(NullArgParser))]
         public void When_CreateParser_ReturnsCorrectOne(ProcedureType cmd, Type returnType)
         {

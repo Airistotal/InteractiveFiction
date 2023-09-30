@@ -4,8 +4,12 @@ using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.Business.Entity.AnimateEntities
 {
-    public abstract class AnimateEntity : BaseEntity, IEntity
+    public abstract class AnimateEntity: BaseAgent
     {
+        protected AnimateEntity(IProcedureBuilder procedureBuilder) : base(procedureBuilder)
+        {
+        }
+
         // Identity Attributes
         public string Name { get; set; } = "";
 
@@ -15,7 +19,7 @@ namespace InteractiveFiction.Business.Entity.AnimateEntities
 
         public List<AnimateEntity> Parents { get; } = new List<AnimateEntity>();
 
-        public new List<AnimateEntity> Children { get; } = new List<AnimateEntity>();
+        public List<AnimateEntity> Children { get; } = new List<AnimateEntity>();
 
         // Physical Attributes
         public int Health { get; set; }
@@ -42,28 +46,5 @@ namespace InteractiveFiction.Business.Entity.AnimateEntities
         public int Hope { get; set; }
 
         public int Groundedness { get; set; }
-
-        protected AnimateEntity(IProcedureBuilder procedureBuilder, ITextDecorator textDecorator)
-            : base(procedureBuilder, textDecorator)
-        {
-        }
-
-        public new void SetLocation(Location location)
-        {
-            Location = location;
-
-            if (Capabilities.ContainsKey(ProcedureType.Move))
-            {
-                Capabilities.Remove(ProcedureType.Move);
-            }
-
-            AddCapability(ProcedureType.Move);
-            //AddCapability(ProcedureType.Look);
-        }
-
-        public override string GetName()
-        {
-            return Name ?? "";
-        }
     }
 }

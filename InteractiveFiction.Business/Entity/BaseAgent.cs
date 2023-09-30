@@ -1,27 +1,21 @@
 ﻿using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 
 namespace InteractiveFiction.Business.Entity
 {
-    public abstract class BaseEntity: IEntity
+    public abstract class BaseAgent : IAgent
     {
         private readonly IProcedureBuilder procedureBuilder;
-        protected readonly ITextDecorator textDecorator;
+
         private readonly List<string> NewEvents = new();
-
-        protected Dictionary<ProcedureType, IProcedure> Capabilities { get; } = new();
-
         public IUniverse? Universe { get; set; }
-        public List<IEntity> Children { get; } = new List<IEntity>();
+        protected Dictionary<ProcedureType, IProcedure> Capabilities { get; } = new();
         public Location Location { get; set; } = NullLocation.Instance;
 
-        public BaseEntity(IProcedureBuilder procedureBuilder, ITextDecorator textDecorator)
+        public BaseAgent(IProcedureBuilder procedureBuilder)
         {
             this.procedureBuilder = procedureBuilder;
-            this.textDecorator = textDecorator;
         }
 
         public void AddCapability(ProcedureType type)
@@ -32,7 +26,7 @@ namespace InteractiveFiction.Business.Entity
             }
 
             Capabilities.Add(type,
-                procedureBuilder.type(type).agent(this).build());
+                procedureBuilder.Type(type).Agent(this).Build());
         }
 
         public void Perform(ProcedureType type, List<IProcedureArg> args)
@@ -45,7 +39,8 @@ namespace InteractiveFiction.Business.Entity
             if (Capabilities.ContainsKey(type))
             {
                 Universe.Put(Capabilities[type].With(args));
-            } else
+            }
+            else
             {
                 AddEvent($"You can't {type.Name().ToLower()}!");
             }
@@ -80,10 +75,5 @@ namespace InteractiveFiction.Business.Entity
         {
             Universe = universe;
         }
-
-        public abstract string GetFullDescription();
-        public abstract string GetName();
-
-        public abstract bool Is(string id);
     }
 }

@@ -1,4 +1,4 @@
-﻿using InteractiveFiction.Business.Procedure.Argument;
+﻿using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.ConsoleGame.Sanitize.Argument
 {

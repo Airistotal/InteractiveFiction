@@ -1,11 +1,7 @@
-﻿using InteractiveFiction.Business.Entity;
-using InteractiveFiction.Business.Existence;
+﻿using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
-using InteractiveFiction.Business.Tests.Utils;
-using Moq;
 
-namespace InteractiveFiction.Business.Tests.Procedure
+namespace InteractiveFiction.Business.Tests.Procedure.Movement
 {
     public class MoveProcedureTests
     {

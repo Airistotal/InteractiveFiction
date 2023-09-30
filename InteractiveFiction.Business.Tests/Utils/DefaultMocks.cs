@@ -14,34 +14,24 @@ namespace InteractiveFiction.Business.Tests.Utils
         {
             var procedureBuilder = new Mock<IProcedureBuilder>();
 
-            procedureBuilder.Setup(_ => _.type(It.IsAny<ProcedureType>())).Returns(procedureBuilder.Object);
-            procedureBuilder.Setup(_ => _.agent(It.IsAny<IEntity>())).Returns(procedureBuilder.Object);
-            procedureBuilder.Setup(_ => _.build()).Returns(new Mock<IProcedure>().Object);
+            procedureBuilder.Setup(_ => _.Type(It.IsAny<ProcedureType>())).Returns(procedureBuilder.Object);
+            procedureBuilder.Setup(_ => _.Agent(It.IsAny<IAgent>())).Returns(procedureBuilder.Object);
+            procedureBuilder.Setup(_ => _.Build()).Returns(new Mock<IProcedure>().Object);
 
             return procedureBuilder;
         }
 
-        public static Mock<IEntityBuilderFactory> GetEntityBuilderFactoryMock(Mock<IEntityBuilder>? locationBuilder = null)
+        public static Mock<IEntityBuilderFactory> GetEntityBuilderFactoryMock(Mock<IEntityBuilder>? builder = null)
         {
-            if (locationBuilder == null)
-            { 
-                locationBuilder = new Mock<IEntityBuilder>();
-                locationBuilder.Setup(_ => _.FromLines(It.IsAny<IEnumerable<string>>())).Returns(locationBuilder.Object);
-                locationBuilder.Setup(_ => _.Build()).Returns(new Location(GetTextDecorator().Object));
+            if (builder == null)
+            {
+                builder = new Mock<IEntityBuilder>();
+                builder.Setup(_ => _.From(It.IsAny<string>())).Returns(builder.Object);
+                builder.Setup(_ => _.Build()).Returns(new Mock<IEntity>().Object);
             }
 
-            var characterBuilder = new Mock<IEntityBuilder>();
-            characterBuilder.Setup(_ => _.Build()).Returns(new Character(GetProcedureBuilderMock().Object, GetTextDecorator().Object));
-
-            var entityBuilder = new Mock<IEntityBuilder>();
-            entityBuilder.Setup(_ => _.FromLines(It.Is<IEnumerable<string>>(_ => _.Any(_ => _.StartsWith("Type:CHARACTER")))))
-                .Returns(characterBuilder.Object);
-            entityBuilder.Setup(_ => _.FromLines(It.Is<IEnumerable<string>>(_ => _.Any(_ => _.StartsWith("Type:LOCATION")))))
-                .Returns((IEnumerable<string> x) => locationBuilder.Object.FromLines(x));
-
-
             var entityBuilderFactory = new Mock<IEntityBuilderFactory>();
-            entityBuilderFactory.Setup(_ => _.GetBuilder()).Returns(entityBuilder.Object);
+            entityBuilderFactory.Setup(_ => _.GetBuilder()).Returns(builder.Object);
 
             return entityBuilderFactory;
         }

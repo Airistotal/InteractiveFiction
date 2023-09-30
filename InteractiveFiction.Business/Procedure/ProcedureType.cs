@@ -5,5 +5,6 @@
         NULL = 0,
         Move = 1,
         Look = 2,
+        Attack = 3,
     }
 }

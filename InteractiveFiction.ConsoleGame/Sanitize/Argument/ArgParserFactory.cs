@@ -8,6 +8,7 @@ namespace InteractiveFiction.ConsoleGame.Sanitize.Argument
         {
             ProcedureType.Look => new LookArgParser(),
             ProcedureType.Move => new MoveArgParser(),
+            ProcedureType.Attack => new AttackArgParser(),
             _ => new NullArgParser(),
         };
     }

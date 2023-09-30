@@ -4,7 +4,6 @@ using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Infrastructure.MessageBus;
 using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.ConsoleGame.Sanitize.Commands;
 using Moq;
 
@@ -22,10 +21,7 @@ namespace InteractiveFiction.ConsoleGame.Tests
             sut.HandleCharacterInfoSelected(new CharacterInfoSelected() { Name = "John" });
 
             messageBus.Verify(_ => _.Register<GameArchetypeSelected>(It.IsAny<Action<IMessage>>()), Times.Once);
-            entityBuilder.Verify(
-                _ => _.FromLines(It.Is<IEnumerable<string>>(
-                    _ => _.Contains("Name:John") && _.Contains("Type:CHARACTER") && _.Contains("DefaultCapabilities:Look"))),
-                Times.Once);
+            entityBuilder.Verify(_ => _.Character("John"), Times.Once);
         }
 
         [Fact]
@@ -51,7 +47,7 @@ namespace InteractiveFiction.ConsoleGame.Tests
             sut.HandleCharacterInfoSelected(new CharacterInfoSelected() { Name = "John" });
             sut.HandleGameArchetypeSelected(new GameArchetypeSelected(new GameArchetype() { Name = "Arbora" }));
 
-            universe.Verify(_ => _.Spawn(It.IsAny<IEntity>()), Times.Once);
+            universe.Verify(_ => _.Spawn(It.IsAny<IAgent>()), Times.Once);
             messageBus.Verify(_ => _.Publish(It.IsAny<MoveToGameMessage>()), Times.Once);
         }
 
@@ -65,7 +61,7 @@ namespace InteractiveFiction.ConsoleGame.Tests
             sut.HandleGameArchetypeSelected(new GameArchetypeSelected(new GameArchetype() { Name = "Arbora" }));
             sut.HandleCharacterInfoSelected(new CharacterInfoSelected() { Name = "John" });
 
-            universe.Verify(_ => _.Spawn(It.IsAny<IEntity>()), Times.Once);
+            universe.Verify(_ => _.Spawn(It.IsAny<IAgent>()), Times.Once);
             messageBus.Verify(_ => _.Publish(It.IsAny<MoveToGameMessage>()), Times.Once);
         }
 
@@ -73,9 +69,9 @@ namespace InteractiveFiction.ConsoleGame.Tests
         public void When_GetScreen_FromCharacterEvents_ClearsEvents()
         {
             var evt = "evt";
-            var character = new Mock<IEntity>();
+            var character = new Mock<IAgent>();
             character.Setup(_ => _.GetNewEvents()).Returns(new List<string>() { evt });
-            var sut = CreateGameContainer(character: character, withGameAndCharacter: true);
+            var sut = CreateGameContainer(character: character.As<IEntity>(), withGameAndCharacter: true);
 
             var screen = sut.GetScreen();
 
@@ -87,14 +83,15 @@ namespace InteractiveFiction.ConsoleGame.Tests
         [Fact]
         public void When_Perfom_ParsesInputForCharacter()
         {
-            var character = new Mock<IEntity>();
+            var agent = new Mock<IAgent>();
+            var character = agent.As<IEntity>();
             var procedureCommandParser = new Mock<IProcedureCommandParser>();
             var sut = CreateGameContainer(procedureCommandParser: procedureCommandParser,
                 character: character, withGameAndCharacter: true);
 
             sut.Perform("");
 
-            character.Verify(_ => _.Perform(It.IsAny<ProcedureType>(), It.IsAny<List<IProcedureArg>>()), Times.Once);
+            agent.Verify(_ => _.Perform(It.IsAny<ProcedureType>(), It.IsAny<List<IProcedureArg>>()), Times.Once);
         }
 
         [Fact]
@@ -123,8 +120,10 @@ namespace InteractiveFiction.ConsoleGame.Tests
             universeBuilder.Setup(_ => _.Create(It.IsAny<string>())).Returns(universe.Object);
 
             character ??= new Mock<IEntity>();
+            character.As<IAgent>();
             entityBuilder ??= new Mock<IEntityBuilder>();
-            entityBuilder.Setup(_ => _.FromLines(It.IsAny<IEnumerable<string>>())).Returns(entityBuilder.Object);
+            entityBuilder.Setup(_ => _.From(It.IsAny<string>())).Returns(entityBuilder.Object);
+            entityBuilder.Setup(_ => _.Character(It.IsAny<string>())).Returns(entityBuilder.Object);
             entityBuilder.Setup(_ => _.Build()).Returns(character.Object);
 
             procedureCommandParser ??= new Mock<IProcedureCommandParser>();

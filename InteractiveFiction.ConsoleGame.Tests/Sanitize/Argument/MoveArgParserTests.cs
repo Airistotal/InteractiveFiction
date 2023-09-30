@@ -1,6 +1,5 @@
-﻿using InteractiveFiction.Business.Entity;
-using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Procedure.Argument;
+﻿using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Procedure.Movement;
 using InteractiveFiction.ConsoleGame.Sanitize.Argument;
 
 namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Argument
@@ -29,21 +28,8 @@ namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Argument
                 var parsed = sut.Parse(new List<string>() { input });
 
                 Assert.NotEmpty(parsed);
-                var mvParsed = AssertIsMoveArg(parsed[0]);
+                var mvParsed = ArgCastUtils.AssertCastArg<MoveArg>(parsed[0]);
                 Assert.Equal(arg.Direction, mvParsed.Direction);
-            }
-        }
-
-        private static MoveArg AssertIsMoveArg(IProcedureArg arg)
-        {
-            Assert.IsType<MoveArg>(arg);
-
-            if (arg is MoveArg mvArg)
-            {
-                return mvArg;
-            } else
-            {
-                throw new Exception("FATAL");
             }
         }
     }

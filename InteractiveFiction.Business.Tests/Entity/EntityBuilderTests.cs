@@ -3,9 +3,9 @@ using InteractiveFiction.Business.Entity.AnimateEntities;
 using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
+using System.IO.Abstractions;
 
 namespace InteractiveFiction.Business.Tests.Entity
 {
@@ -14,28 +14,31 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void When_BuildCharacter_HasAllAttributes()
         {
-            var entityBuilder = GetEntityBuilder();
+            var filePath = "path";
+            var fileSystem = GetFileSystemMock(filePath,
+                "{" +
+                "   \"Type\":\"CHARACTER\"," +
+                "   \"Name\":\"King Leon\"," +
+                "   \"Description\":\"The King of the Misty Castle\"," +
+                "   \"Birthdate\":\"Unknown\"," +
+                "   \"Parents\":[]," +
+                "   \"Children\":[]," +
+                "   \"Health\":2400," +
+                "   \"Strength\":1," +
+                "   \"Speed\":2," +
+                "   \"Dexterity\":3," +
+                "   \"Endurance\":4," +
+                "   \"Restraint\":5," +
+                "   \"Discretion\":6," +
+                "   \"Courage\":7," +
+                "   \"Fairness\":8," +
+                "   \"Compassion\":9," +
+                "   \"Hope\":10," +
+                "   \"Groundedness\":11," +
+                "}");
+            var entityBuilder = GetEntityBuilder(fileSystem);
 
-            var entity = (Character) entityBuilder.FromLines(new List<string>() {
-                "Type:CHARACTER",
-                "Name:King Leon",
-                "Description: The King of the Misty Castle",
-                "Birthdate: Unknown",
-                "Parents:",
-                "Children:",
-                "Health: 2400",
-                "Strength: 1",
-                "Speed: 2",
-                "Dexterity: 3",
-                "Endurance: 4",
-                "Restraint: 5",
-                "Discretion: 6",
-                "Courage: 7",
-                "Fairness: 8",
-                "Compassion: 9",
-                "Hope: 10",
-                "Groundedness: 11"
-            }).Build();
+            var entity = (Character) entityBuilder.From(filePath).Build();
 
             Assert.Equal("King Leon", entity.Name);
             Assert.Equal("The King of the Misty Castle", entity.Description);
@@ -59,34 +62,41 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void When_BuildEntity_CreatesDefaultCapabilities()
         {
+            var filePath = "path";
+            var fileSystem = GetFileSystemMock(filePath,
+                "{" +
+                "   \"Type\":\"CHARACTER\"," +
+                "   \"Name\":\"Name\"," +
+                "   \"Health\":\"123\"," +
+                $"  \"DefaultCapabilities\":\"{ProcedureType.Look},{ProcedureType.Move},{ProcedureType.Attack}\"," +
+                "}");
             var procedureBuilder = DefaultMocks.GetProcedureBuilderMock();
-            var entityBuilder = GetEntityBuilder(procedureBuilder);
-            var entity = (Character)entityBuilder.FromLines(new List<string>() {
-                "Type:CHARACTER",
-                "Name:King Leon",
-                "Description: The King of the Misty Castle",
-                $"DefaultCapabilities: {ProcedureType.Look},{ProcedureType.Move}"
-            }).Build();
+            var entityBuilder = GetEntityBuilder(fileSystem, procedureBuilder);
+            var entity = (Character)entityBuilder.From(filePath).Build();
             entity.Universe = new Mock<IUniverse>().Object;
 
             entity.Perform(ProcedureType.Look, new List<IProcedureArg>());
 
-            procedureBuilder.Verify(_ => _.type(It.Is<ProcedureType>(_ => _ == ProcedureType.Look)), Times.Once);
-            procedureBuilder.Verify(_ => _.type(It.Is<ProcedureType>(_ => _ == ProcedureType.Move)), Times.Once);
+            procedureBuilder.Verify(_ => _.Type(It.Is<ProcedureType>(_ => _ == ProcedureType.Look)), Times.Once);
+            procedureBuilder.Verify(_ => _.Type(It.Is<ProcedureType>(_ => _ == ProcedureType.Move)), Times.Once);
+            procedureBuilder.Verify(_ => _.Type(It.Is<ProcedureType>(_ => _ == ProcedureType.Attack)), Times.Once);
         }
 
         [Fact]
         public void When_BuildLocation_HasAllAttributes()
         {
-            var entityBuilder = GetEntityBuilder();
+            var filePath = "path";
+            var fileSystem = GetFileSystemMock(filePath,
+                "{" +
+                "   \"Type\":\"LOCATION\"," +
+                "   \"Title\":\"Misty Castle\"," +
+                "   \"Description\":\"This is the Misty Castle.The centre of the Kingdom and the seat of power.\"," +
+                "   \"LocationType\":\"Building\"," +
+                "   \"Entities\":\"KingLeon\"" +
+                "}");
+            var entityBuilder = GetEntityBuilder(fileSystem);
 
-            var entity = (Location)entityBuilder.FromLines(new List<string>() {
-                "Type:LOCATION",
-                "Title:Misty Castle",
-                "Description: This is the Misty Castle.The centre of the Kingdom and the seat of power.",
-                "LocationType: Building",
-                "Entities:KingLeon",
-            }).Build();
+            var entity = (Location)entityBuilder.From(filePath).Build();
 
             Assert.Equal("Misty Castle", entity.Title);
             Assert.Equal("This is the Misty Castle.The centre of the Kingdom and the seat of power.", entity.Description);
@@ -94,11 +104,41 @@ namespace InteractiveFiction.Business.Tests.Entity
             Assert.Equal(new List<string> { "KingLeon" }, entity.EntityNames);
         }
 
-        private EntityBuilder GetEntityBuilder(Mock<IProcedureBuilder>? procedureBuilder = null)
+        [Fact]
+        public void When_BuildCharacterPrototype_BuildsFromPrototypeFile()
+        {
+            var filePath = "res/prototype/character.json";
+            var fileSystem = GetFileSystemMock(filePath,
+                "{" +
+                "   \"Type\":\"CHARACTER\"," +
+                "   \"Name\":\"Name\"," +
+                "   \"Health\":\"123\"," +
+                $"  \"DefaultCapabilities\":\"{ProcedureType.Look},{ProcedureType.Move},{ProcedureType.Attack}\"," +
+                "}");
+            var entityBuilder = GetEntityBuilder(fileSystem);
+
+            var entity = (Character)entityBuilder.Character("name").Build();
+
+            Assert.Equal("name", entity.GetName());
+            fileSystem.Verify(_ => _.File.ReadAllText(filePath), Times.Once);
+        }
+
+        private EntityBuilder GetEntityBuilder(Mock<IFileSystem> fileSystem, Mock<IProcedureBuilder>? procedureBuilder = null)
         {
             return new EntityBuilder(
                 procedureBuilder?.Object ?? DefaultMocks.GetProcedureBuilderMock().Object, 
-                DefaultMocks.GetTextDecorator().Object);
+                DefaultMocks.GetTextDecorator().Object, 
+                fileSystem.Object);
+        }
+
+        private Mock<IFileSystem> GetFileSystemMock(string path, string fileContent)
+        {
+            var file = new Mock<IFile>();
+            file.Setup(_ => _.ReadAllText(path)).Returns(fileContent);
+            var fileSystem = new Mock<IFileSystem>();
+            fileSystem.Setup(_ => _.File).Returns(file.Object);
+
+            return fileSystem;
         }
     }
 }

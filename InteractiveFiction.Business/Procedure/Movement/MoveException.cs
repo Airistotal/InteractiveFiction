@@ -1,4 +1,4 @@
-﻿namespace InteractiveFiction.Business.Procedure
+﻿namespace InteractiveFiction.Business.Procedure.Movement
 {
     public class MoveException : Exception
     {

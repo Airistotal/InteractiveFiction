@@ -4,8 +4,8 @@ namespace InteractiveFiction.Business.Procedure
 {
     public interface IProcedureBuilder
     {
-        IProcedureBuilder agent(IEntity agent);
-        IProcedure build();
-        IProcedureBuilder type(ProcedureType type);
+        IProcedureBuilder Agent(IAgent agent);
+        IProcedure Build();
+        IProcedureBuilder Type(ProcedureType type);
     }
 }

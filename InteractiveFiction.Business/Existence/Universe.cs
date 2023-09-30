@@ -45,12 +45,18 @@ namespace InteractiveFiction.Business.Existence
             return new Instant(spawn);
         }
 
-        public void Spawn(IEntity entity)
+        public void Spawn(IAgent agent)
         {
-            entity.SetLocation(spawn);
-            entity.SetUniverse(this);
-            entity.AddEvent($"{spawn.GetFullDescription()}");
-            spawn.Children.Add(entity);
+            if (agent is IEntity entity)
+            {
+                entity.SetLocation(spawn);
+                entity.SetUniverse(this);
+                agent.AddEvent($"{spawn.GetFullDescription()}");
+                spawn.Children.Add(entity);
+            } else
+            {
+                throw new Exception("Unable to spawn agent that isn't an entity.");
+            }
         }
     }
 }

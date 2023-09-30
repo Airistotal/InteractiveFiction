@@ -1,5 +1,4 @@
 ﻿using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 
 namespace InteractiveFiction.Business.Tests.Procedure
 {
