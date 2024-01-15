@@ -1,115 +1,110 @@
-﻿using InteractiveFiction.Business.Entity;
-using InteractiveFiction.Business.Entity.Locations;
-using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Tests.Utils;
-using Moq;
+﻿using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.Business.Tests.Entity
 {
     public class BaseAgentTests
     {
         [Fact]
-        public void WhenUniverseEntityDoesProcedureWithoutUniverseThrowsException()
+        public void WhenUniverseEntityDoesProcedureWithoutUniverse_ThrowsException()
         {
-            var sut = GetAgent();
+            BaseAgentFixture.GetFixture()
 
-            Assert.Throws<Exception>(() => sut.Perform(ProcedureType.Move, new List<IProcedureArg>()));
+                .InstantiateEmpty()
+
+                .AssertPerformThrowsException();
         }
 
         [Fact]
-        public void WhenUniverseEntityDoesProcedureNotInCapabilitiesIgnores()
+        public void WhenAddCapabilityWithoutProcedureBuilder_ThrowsException()
         {
-            var universe = new Mock<IUniverse>();
-            universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
-            var sut = GetAgent();
-            sut.Universe = universe.Object;
+            BaseAgentFixture.GetFixture()
 
-            sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
+                .InstantiateEmpty()
 
-            universe.Verify(_ => _.Put(It.IsAny<IProcedure>()), Times.Never);
+                .AssertAddCapabilityThrowsException();
         }
 
         [Fact]
-        public void WhenUniverseEntityDoesProcedureInCapabilitiesSendsToUniverse()
+        public void WhenEntityDoesProcedureNotInCapabilities_Ignores()
         {
-            var universe = new Mock<IUniverse>();
-            universe.Setup(_ => _.Put(It.IsAny<IProcedure>()));
-            var sut = GetAgent();
-            sut.Universe = universe.Object;
-            sut.AddCapability(ProcedureType.Move);
-            sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
+            BaseAgentFixture.GetFixture()
 
-            universe.Verify(_ => _.Put(It.IsAny<IProcedure>()), Times.Once);
+                .PerformMove()
+
+                .AssertUniverseNeverPutsProcedure();
         }
 
         [Fact]
-        public void WhenAddCapabilityWithoutProcedureBuilderThrowsException()
+        public void WhenEntityDoesProcedureInCapabilities_SendsToUniverse()
         {
-            var sut = new Mock<BaseAgent>(null);
+            BaseAgentFixture.GetFixture()
+                .WithCapability(ProcedureType.Move)
 
-            Assert.Throws<Exception>(() => sut.Object.AddCapability(ProcedureType.Move));
+                .PerformMove()
+
+                .AssertUniversePutsProcedure();
         }
 
         [Fact]
-        public void WhenAddEvent_AddsToNewEvents()
+        public void WhenEntityAddsProcedure_ObservesProcedure()
         {
-            var evt = "text";
-            var sut = GetAgent();
+            BaseAgentFixture.GetFixture()
+                .WithObservableCapability(ProcedureType.Move)
 
-            sut.AddEvent(evt);
-            var events = sut.GetNewEvents();
+                .AddCapabilities()
 
-            Assert.Contains(evt, events);
-        }
-
-        [Fact]
-        public void WhenArchiveEvents_RemovesEvents()
-        {
-            var evt = "text";
-            var sut = GetAgent();
-
-            sut.AddEvent(evt);
-            sut.ArchiveEvents();
-
-            Assert.Empty(sut.GetNewEvents());
+                .AssertProcedureSubscribed();
         }
 
         [Fact]
         public void WhenPerformProcedure_NotFound_AddsEvent()
         {
-            var sut = GetAgent();
-            sut.Universe = new Mock<IUniverse>().Object;
+            BaseAgentFixture.GetFixture()
 
-            sut.Perform(ProcedureType.Move, new List<IProcedureArg>());
+                .PerformMove()
 
-            Assert.Contains(sut.GetNewEvents(), _ => _.Contains("You can't"));
+                .AssertIncapableOfProcedureEvent();
+        }
+
+        [Fact]
+        public void WhenAddEvent_AddsToNewEvents()
+        {
+            BaseAgentFixture.GetFixture()
+
+                .AddEvent()
+
+                .AssertEventAdded();
+        }
+
+        [Fact]
+        public void WhenArchiveEvents_RemovesEvents()
+        {
+            BaseAgentFixture.GetFixture()
+
+                .AddAndArchiveEvents()
+
+                .AssertEventsArchived();
         }
 
         [Fact]
         public void WhenAgentChangesLocation_UpdatesLocation()
         {
-            var sut = GetAgent();
-            var location = GetLocation("fdsa");
-            var location2 = GetLocation("zcxv");
+            BaseAgentFixture.GetFixture()
 
-            sut.SetLocation(location);
-            sut.SetLocation(location2);
+                .SetLocation()
 
-            Assert.Equal(location2, sut.Location);
+                .AssertLocationSet();
         }
 
-        private static BaseAgent GetAgent()
+        [Fact]
+        public void WhenPerformCapability_IsObservable_ObservesProcedure()
         {
-            return new Mock<BaseAgent>(DefaultMocks.GetProcedureBuilderMock().Object).Object;
-        }
+            BaseAgentFixture.GetFixture()
+                .WithObservableCapability(ProcedureType.Move)
 
-        private static Location GetLocation(string Title)
-        {
-            return new Location(DefaultMocks.GetTextDecorator().Object)
-            {
-                Title = Title
-            };
+                .PerformMove()
+
+                .AssertProcedureWasObserved();
         }
     }
 }

@@ -1,6 +1,0 @@
-﻿Type:LOCATION
-Title:Arbora
-
-Description:This is the region of Arbora. A nature preserve now, it used to be a quiet countryside that people oft retired to.
-
-LocationType:Region

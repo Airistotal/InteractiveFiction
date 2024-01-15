@@ -11,6 +11,6 @@ namespace InteractiveFiction.Business.Procedure
 
         public void Perform() { }
 
-        public IProcedure With(List<IProcedureArg> args) { return this; }
+        public IProcedure With(IList<IProcedureArg> args) { return this; }
     }
 }

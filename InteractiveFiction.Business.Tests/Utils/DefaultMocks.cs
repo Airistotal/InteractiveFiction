@@ -1,6 +1,6 @@
 ﻿using InteractiveFiction.Business.Entity;
-using InteractiveFiction.Business.Entity.AnimateEntities;
-using InteractiveFiction.Business.Entity.Locations;
+using InteractiveFiction.Business.Goal;
+using InteractiveFiction.Business.Goal.Questing;
 using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Procedure;
 using Moq;
@@ -10,13 +10,29 @@ namespace InteractiveFiction.Business.Tests.Utils
 {
     internal class DefaultMocks
     {
-        public static Mock<IProcedureBuilder> GetProcedureBuilderMock()
+        public static Mock<IObserverFactory> GetTrackerFactoryMock()
         {
-            var procedureBuilder = new Mock<IProcedureBuilder>();
+            var trackerFactory = new Mock<IObserverFactory>();
+            trackerFactory.Setup(_ => _.Create(It.Is<ObserverType>(_ => _ == ObserverType.Quest)))
+                .Returns(new Mock<IQuestManager>().As<IObserver<IStat>>().Object);
+            trackerFactory.Setup(_ => _.Create(It.Is<ObserverType>(_ => _ == ObserverType.Stat)))
+                .Returns(new Mock<IObserver<IStat>>().Object);
 
+            return trackerFactory;
+        }
+
+        public static Mock<IProcedureBuilder> GetProcedureBuilderMock(Mock<IProcedure> procedure = null)
+        {
+            if (procedure == null)
+            {
+                procedure = new Mock<IProcedure>();
+                procedure.Setup(_ => _.With(It.IsAny<IList<IProcedureArg>>())).Returns(procedure.Object);
+            }
+
+            var procedureBuilder = new Mock<IProcedureBuilder>();
             procedureBuilder.Setup(_ => _.Type(It.IsAny<ProcedureType>())).Returns(procedureBuilder.Object);
             procedureBuilder.Setup(_ => _.Agent(It.IsAny<IAgent>())).Returns(procedureBuilder.Object);
-            procedureBuilder.Setup(_ => _.Build()).Returns(new Mock<IProcedure>().Object);
+            procedureBuilder.Setup(_ => _.Build()).Returns(procedure.Object);
 
             return procedureBuilder;
         }

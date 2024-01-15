@@ -1,23 +1,27 @@
-﻿using InteractiveFiction.Business.Goal.Statistics;
-using InteractiveFiction.Business.Procedure;
-
-namespace InteractiveFiction.Business.Goal.Questing
+﻿namespace InteractiveFiction.Business.Goal.Questing
 {
-    public class QuestManager : IQuestManager, ITracker
+    public class QuestManager : IQuestManager, IObserver<IStat>
     {
-        private readonly ITracker tracker;
+        private readonly IObserver<IStat> observer;
+
+        private readonly IObservable<IStat> observable;
 
         private readonly IList<IQuest> quests;
 
-        public QuestManager(ITracker tracker)
+        public QuestManager(IObserver<IStat> observer, IObservable<IStat> observable)
         {
             this.quests = new List<IQuest>();
-            this.tracker = tracker;
+            this.observer = observer;
+            this.observable = observable;
         }
 
         public void AddQuest(IQuest quest)
         {
-            quest.UseTracker(tracker);
+            if (quest is IObserver<IStat> observerQuest)
+            {
+                observable.Subscribe(observerQuest);
+            }
+
             quests.Add(quest);
         }
 
@@ -41,19 +45,19 @@ namespace InteractiveFiction.Business.Goal.Questing
             return rewards;
         }
 
-        public IDictionary<Type, IStat> GetStats()
+        public void OnCompleted()
         {
-            return tracker.GetStats();
+            observer.OnCompleted();
         }
 
-        public void Subscribe<T>(IStatSubscriber subscriber) where T : IStat
+        public void OnError(Exception error)
         {
-            tracker.Subscribe<T>(subscriber);
+            observer.OnError(error);
         }
 
-        public void Track(IProcedure procedure)
+        public void OnNext(IStat stat)
         {
-            tracker.Track(procedure);
+            observer.OnNext(stat);
         }
     }
 }

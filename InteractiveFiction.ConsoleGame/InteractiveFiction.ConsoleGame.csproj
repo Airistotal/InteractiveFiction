@@ -16,55 +16,58 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="games\Arbora\Arbora.txt">
+    <None Update="games\Arbora\Arbora.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\BorealForest.txt">
+    <None Update="games\Arbora\BorealForest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\Entity\Kobold.txt">
+    <None Update="games\Arbora\Entity\Kobold.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\Heath.txt">
+    <None Update="games\Arbora\Heath.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\KoboldDen.txt">
+    <None Update="games\Arbora\KoboldDen.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\OldForest.txt">
+    <None Update="games\Arbora\OldForest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\RuinedVillage.txt">
+    <None Update="games\Arbora\RuinedVillage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\Spawn.txt">
+    <None Update="games\Arbora\Spawn.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Arbora\_map.txt">
+    <None Update="games\Arbora\_map.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Erogund\Entity\KingLeon.txt">
+    <None Update="games\Erogund\Entity\KingLeon.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Erogund\Erogund.txt">
+    <None Update="games\Erogund\Erogund.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Erogund\MistyCastle.txt">
+    <None Update="games\Erogund\MistyCastle.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Erogund\OldFarmstead.txt">
+    <None Update="games\Erogund\OldFarmstead.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Erogund\QuaintVillage.txt">
+    <None Update="games\Erogund\QuaintVillage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Erogund\Spawn.txt">
+    <None Update="games\Erogund\Spawn.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="games\Erogund\_map.txt">
+    <None Update="games\Erogund\_map.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="res\i18n\en_CA.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="res\prototype\character.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

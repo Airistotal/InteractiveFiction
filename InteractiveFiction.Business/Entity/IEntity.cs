@@ -6,8 +6,9 @@ namespace InteractiveFiction.Business.Entity
     public interface IEntity
     {
         bool Is(string id);
-        string GetFullDescription();
+        Guid GetId();
         string GetName();
+        string GetFullDescription();
         void SetLocation(Location location);
         void SetUniverse(IUniverse universe);
         Location GetLocation();

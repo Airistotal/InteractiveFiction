@@ -6,5 +6,6 @@
         Move = 1,
         Look = 2,
         Attack = 3,
+        Save = 4,
     }
 }

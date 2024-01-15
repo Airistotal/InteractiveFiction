@@ -21,6 +21,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Commands
         [InlineData("atk", ProcedureType.Attack)]
         [InlineData("atk ", ProcedureType.Attack)]
         [InlineData("atk target", ProcedureType.Attack)]
+        [InlineData("save", ProcedureType.Save)]
         public void When_ParseInput_ReturnsProcedureCommand(string input, ProcedureType type)
         {
             var arg = new Mock<IProcedureArg>().Object;

@@ -1,5 +1,4 @@
 ﻿using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.Business.Tests.Procedure.Movement
 {
@@ -8,64 +7,78 @@ namespace InteractiveFiction.Business.Tests.Procedure.Movement
         [Fact]
         public void WhenMove_WithDestination_CanMove()
         {
-            var harness = new MoveProcedureTestHarness()
-                .WithDestination(Direction.North);
+            MoveProcedureFixture.GetFixture()
+                .WithDestination(Direction.North)
 
-            harness.PerformMoveWithArg();
+                .PerformMoveWithArg()
 
-            harness.AssertMoved();
+                .AssertMoved();
         }
 
         [Fact]
         public void WhenMove_WithoutDestination_CantMove()
         {
-            var harness = new MoveProcedureTestHarness()
-                .WithoutDestination(Direction.North);
+            MoveProcedureFixture.GetFixture()
+                .WithoutDestination(Direction.North)
 
-            harness.PerformMoveWithArg();
+                .PerformMoveWithArg()
 
-            harness.AssertUnmoved();
+                .AssertUnmoved();
         }
 
         [Fact]
         public void WhenMove_WithoutDirection_CantMove()
         {
-            var harness = new MoveProcedureTestHarness()
-                .WithDestination(Direction.NULL);
+            MoveProcedureFixture.GetFixture()
+                .WithDestination(Direction.NULL)
 
-            harness.PerformMoveWithArg();
+                .PerformMoveWithArg()
 
-            harness.AssertUnmoved();
+                .AssertUnmoved();
         }
 
         [Fact]
-        public void WhenMoveAgentNotInLocationThrowsException()
+        public void WhenMove_AgentNotInLocation_ThrowsException()
         {
-            var harness = new MoveProcedureTestHarness()
+            MoveProcedureFixture.GetFixture()
                 .WithDestination(Direction.North)
-                .WithoutAgent();
+                .WithoutAgent()
 
-            Assert.Throws<ProcedureException>(() => harness.PerformMoveWithArg());
-        }
-
-        [Fact]
-        public void WhenMove_WithoutOriginThrowsProcedureException()
-        {
-            var harness = new MoveProcedureTestHarness()
-                .WithDestination(Direction.North)
-                .WithoutAgent();
-
-            Assert.Throws<ProcedureException>(() => harness.PerformMoveWithArg(false));
+                .AssertMoveThrowsException();
         }
 
         [Fact]
         public void WhenMove_WithNoMoveArg_ThrowsProcedureException()
         {
-            var harness = new MoveProcedureTestHarness()
+            MoveProcedureFixture.GetFixture()
                 .WithDestination(Direction.North)
-                .WithoutAgent();
+                .WithoutAgent()
 
-            Assert.Throws<ProcedureException>(() => harness.PerformMoveWithArg(false));
+                .AssertMoveWithoutArgThrowsException();
+        }
+
+        [Fact]
+        public void When_GetProcedureAsStat_ReturnsMoveStat()
+        {
+            MoveProcedureFixture.GetFixture()
+                .WithDestination(Direction.North)
+                .PerformMoveWithArg()
+
+                .GetAsStat()
+
+                .AssertStatIsMoveStat();
+        }
+
+        [Fact]
+        public void When_ProcedureIsObserved_SendsMoveToObserver()
+        {
+            MoveProcedureFixture.GetFixture()
+                .WithDestination(Direction.North)
+                .WithObserver()
+
+                .PerformMoveWithArg()
+
+                .AssertObserverIsCalled();
         }
     }
 }

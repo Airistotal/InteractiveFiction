@@ -49,7 +49,7 @@ namespace InteractiveFiction.Business.Procedure.Combat
             }
         }
 
-        public IProcedure With(List<IProcedureArg> args)
+        public IProcedure With(IList<IProcedureArg> args)
         {
             if (args != null && args.Count > 0 && args[0] is AttackArg atkArg)
             {

@@ -49,5 +49,10 @@ namespace InteractiveFiction.Business.Entity
         public void SetUniverse(IUniverse universe)
         {
         }
+
+        public Guid GetId()
+        {
+            return Guid.Empty;
+        }
     }
 }

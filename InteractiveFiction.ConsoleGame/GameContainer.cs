@@ -2,7 +2,6 @@
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Infrastructure.MessageBus;
 using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
-using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.ConsoleGame.Sanitize.Commands;
 using System.Diagnostics.CodeAnalysis;
 

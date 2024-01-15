@@ -1,0 +1,23 @@
+﻿@page "/new-world"
+@using InteractiveFiction.WorldBuilder.Business;
+@using InteractiveFiction.WorldBuilder.Business.World;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject NavigationManager NavManager
+
+<h3>Build a new world</h3>
+
+<input @bind="WorldName" type="text" placeholder="New World Name" />
+
+<div class="button" @onclick="Create">Create</div>
+
+@code {
+    private string WorldName;
+
+    private async void Create()
+    {
+        await ProtectedSessionStore.SetAsync(SessionKey.WORKING_WORLD.ToString(), new World(WorldName));
+
+        NavManager.NavigateTo("/editor/world");
+    }
+}

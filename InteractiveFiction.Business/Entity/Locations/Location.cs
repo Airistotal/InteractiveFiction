@@ -161,5 +161,10 @@ namespace InteractiveFiction.Business.Entity.Locations
         {
             return this;
         }
+
+        public Guid GetId()
+        {
+            return Id;
+        }
     }
 }

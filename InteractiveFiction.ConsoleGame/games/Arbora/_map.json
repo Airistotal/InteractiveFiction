@@ -1,0 +1,8 @@
+﻿{
+    "BorealForest": "West;Heath,North;RuinedVillage",
+    "RuinedVillage": "South;BorealForest,North;OldForest",
+    "OldForest": "South;RuinedVillage,In;KoboldDen",
+    "KoboldDen": "Out;OldForest",
+    "Heath": "East;BorealForest",
+    "Spawn": "West;OldForest"
+}

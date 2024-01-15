@@ -30,7 +30,7 @@ namespace InteractiveFiction.Business.Procedure.Investigate
             Agent.AddEvent(Target.GetFullDescription());
         }
 
-        public IProcedure With(List<IProcedureArg> args)
+        public IProcedure With(IList<IProcedureArg> args)
         {
             CheckAgent();
 
