@@ -2,7 +2,7 @@
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Infrastructure.MessageBus;
 using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
-using InteractiveFiction.ConsoleGame.Sanitize.Commands;
+using InteractiveFiction.Business.Procedure;
 using System.Diagnostics.CodeAnalysis;
 
 namespace InteractiveFiction.ConsoleGame
@@ -12,7 +12,6 @@ namespace InteractiveFiction.ConsoleGame
         private readonly IMessageBus messageBus;
         private readonly IUniverseBuilder universeBuilder;
         private readonly IEntityBuilder entityBuilder;
-        private readonly IProcedureCommandParser procedureCommandParser;
 
         private IUniverse? universe;
         private IEntity? character;
@@ -21,13 +20,11 @@ namespace InteractiveFiction.ConsoleGame
         public GameContainer(
             IMessageBus messageBus,
             IUniverseBuilder universeBuilder,
-            IEntityBuilder entityBuilder,
-            IProcedureCommandParser procedureCommandParser)
+            IEntityBuilder entityBuilder)
         {
             this.messageBus = messageBus;
             this.universeBuilder = universeBuilder;
             this.entityBuilder = entityBuilder;
-            this.procedureCommandParser = procedureCommandParser;
 
             this.messageBus.Register<GameArchetypeSelected>(this.HandleGameArchetypeSelected);
             this.messageBus.Register<CharacterInfoSelected>(this.HandleCharacterInfoSelected);
@@ -83,13 +80,11 @@ namespace InteractiveFiction.ConsoleGame
             return string.Join(Environment.NewLine, events);
         }
 
-        public void Perform(string input)
+        public void Perform(ProcedureCommand command)
         {
             CheckIsReady();
 
-            var procedureCommand = procedureCommandParser.Parse(input);
-
-            characterAgent.Perform(procedureCommand.ProcedureType, procedureCommand.Args);
+            characterAgent.Perform(command.ProcedureType, command.Args);
         }
 
         [MemberNotNull(nameof(character))]

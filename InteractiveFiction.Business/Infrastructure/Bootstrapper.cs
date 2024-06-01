@@ -1,6 +1,7 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
+using InteractiveFiction.ConsoleGame;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Abstractions;
 
@@ -19,7 +20,8 @@ namespace InteractiveFiction.Business.Infrastructure
                 .AddSingleton<IUniverseBuilder, UniverseBuilder>()
                 .AddSingleton<IProcedureBuilder, ProcedureBuilder>()
                 .AddSingleton(_ => MessageBus.MessageBus.GetMessageBus())
-                .AddSingleton<IFileSystem, FileSystem>();
+                .AddSingleton<IFileSystem, FileSystem>()
+                .AddSingleton<IStore<SavedGame, GameContainer>, GameStore>();
 
             return service;
         }
