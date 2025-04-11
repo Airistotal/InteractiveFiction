@@ -1,19 +1,21 @@
-﻿namespace InteractiveFiction.Business.Infrastructure
+﻿using System.IO.Abstractions;
+
+namespace InteractiveFiction.Business.Infrastructure.Game
 {
     public class GameArchetypeLoader : IGameArchetypeLoader
     {
-        private readonly IDirectoryFacade directoryFacade;
+        private readonly IFileSystem fileSystem;
 
-        public GameArchetypeLoader(IDirectoryFacade directoryFacade)
+        public GameArchetypeLoader(IFileSystem fileSystem)
         {
-            this.directoryFacade = directoryFacade;
+            this.fileSystem = fileSystem;
         }
 
         public List<GameArchetype> LoadGameArchetypes()
         {
             var gameArchetypes = new List<GameArchetype>();
 
-            foreach (var dirPath in this.directoryFacade.GetDirectories("games")) {
+            foreach (var dirPath in fileSystem.Directory.GetDirectories("games")) {
                 var dir = new DirectoryInfo(dirPath);
                 gameArchetypes.Add(new GameArchetype() { Name = dir.Name });
             }

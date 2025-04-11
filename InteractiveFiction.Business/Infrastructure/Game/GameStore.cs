@@ -1,18 +1,19 @@
-﻿using InteractiveFiction.ConsoleGame;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.Text.Json;
 
-namespace InteractiveFiction.Business.Infrastructure
+namespace InteractiveFiction.Business.Infrastructure.Game
 {
-    public class GameStore : IStore<SavedGame, GameContainer>
+    public class GameStore : IStore<SavedGame, IGameContainer>
     {
 
         private readonly string appData;
         private readonly string saveDir;
         private readonly IFileSystem FileSystem;
+        private readonly IFactory<GameType, IGameContainer> GameContainerFactory;
 
-        public GameStore(IFileSystem fileSystem) {
+        public GameStore(IFileSystem fileSystem, IFactory<GameType, IGameContainer> gameContainerFactory) {
             FileSystem = fileSystem;
+            GameContainerFactory = gameContainerFactory;
 
             appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             saveDir = appData + "/IF/saves";
@@ -35,7 +36,7 @@ namespace InteractiveFiction.Business.Infrastructure
             }
         }
 
-        public GameContainer Load(SavedGame savedGame)
+        public IGameContainer Load(SavedGame savedGame)
         {
             if (FileSystem.Directory.Exists(saveDir))
             {
@@ -45,13 +46,17 @@ namespace InteractiveFiction.Business.Infrastructure
                     throw new NoGameException();
                 }
 
-                return JsonSerializer.Deserialize<GameContainer>(fs);
+                var saveData = JsonSerializer.Deserialize<SaveData>(fs);
+                var gameContainer = GameContainerFactory.Create(GameType.Generic);
+                gameContainer.Load(saveData);
+                
+                return gameContainer;
             }
 
             throw new NoGameException();
         }
 
-        public void Save(SavedGame savedGame, GameContainer value)
+        public void Save(SavedGame savedGame, IGameContainer value)
         {
             if (FileSystem.Directory.Exists(saveDir))
             {
@@ -61,7 +66,7 @@ namespace InteractiveFiction.Business.Infrastructure
             using var fs = FileSystem.FileStream.New(saveDir + "/" + savedGame.Name, FileMode.OpenOrCreate);
             fs.SetLength(0);
 
-            JsonSerializer.Serialize(fs, value);
+            JsonSerializer.Serialize(fs, value.GetSaveData());
         }
     }
 }

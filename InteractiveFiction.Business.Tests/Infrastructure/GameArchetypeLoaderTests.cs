@@ -1,4 +1,5 @@
-﻿using InteractiveFiction.Business.Infrastructure;
+﻿using System.IO.Abstractions;
+using InteractiveFiction.Business.Infrastructure.Game;
 using Moq;
 
 namespace InteractiveFiction.Business.Tests.Infrastructure
@@ -8,9 +9,12 @@ namespace InteractiveFiction.Business.Tests.Infrastructure
         [Fact]
         public void When_LoadGameArchetypes_LooksAtDirectory()
         {
-            var directoryFacade = new Mock<IDirectoryFacade>();
-            var sut = new GameArchetypeLoader(directoryFacade.Object);
-            directoryFacade.Setup(_ => _.GetDirectories("games")).Returns(new string[] { "GameName" });
+            var fs = new Mock<IFileSystem>();
+            var directory = new Mock<IDirectory>();
+            fs.Setup(x => x.Directory).Returns(directory.Object);
+            directory.Setup(x => x.GetDirectories("games")).Returns(new string[] { "GameName" });
+
+            var sut = new GameArchetypeLoader(fs.Object);
 
             var archetypes = sut.LoadGameArchetypes();
 
@@ -18,7 +22,7 @@ namespace InteractiveFiction.Business.Tests.Infrastructure
             Assert.Single(archetypes);
             Assert.Equal("GameName", archetypes[0].Name);
 
-            directoryFacade.Verify(_ => _.GetDirectories("games"), Times.Once);
+            directory.Verify(_ => _.GetDirectories("games"), Times.Once);
         }
     }
 }

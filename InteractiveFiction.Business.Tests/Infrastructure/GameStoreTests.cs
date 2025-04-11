@@ -1,5 +1,4 @@
-﻿using Xunit.Sdk;
-using InteractiveFiction.Business.Infrastructure;
+﻿using InteractiveFiction.Business.Infrastructure.Game;
 
 namespace InteractiveFiction.Business.Tests.Infrastructure
 {

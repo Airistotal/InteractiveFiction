@@ -1,7 +1,6 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Entity.Locations;
 using Newtonsoft.Json.Linq;
-using System.IO;
 using System.IO.Abstractions;
 
 namespace InteractiveFiction.Business.Existence
@@ -25,7 +24,7 @@ namespace InteractiveFiction.Business.Existence
         public IUniverse Create(string name)
         {
             baseDir = "./games/" + name;
-            if (!Directory.Exists(baseDir))
+            if (!fileSystem.Directory.Exists(baseDir))
             {
                 throw new Exception("Unable to find Universe to load.");
             }

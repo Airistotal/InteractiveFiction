@@ -5,7 +5,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Argument
 {
     public class AttackArgParserTests
     {
-        private static IEnumerable<object[]> Data()
+        public static IEnumerable<object[]> Data()
         {
             yield return new object[] { "", new AttackArg("") };
             yield return new object[] { "2", new AttackArg("2") };

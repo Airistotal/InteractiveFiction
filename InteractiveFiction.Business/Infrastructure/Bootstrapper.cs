@@ -1,7 +1,7 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Infrastructure.Game;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.ConsoleGame;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Abstractions;
 
@@ -14,14 +14,14 @@ namespace InteractiveFiction.Business.Infrastructure
             service
                 .AddSingleton<ITextLoader, TextLoader>()
                 .AddSingleton<IGameArchetypeLoader, GameArchetypeLoader>()
-                .AddSingleton<IDirectoryFacade, DirectoryFacade>()
                 .AddSingleton<IEntityBuilder, EntityBuilder>()
                 .AddSingleton<IEntityBuilderFactory, EntityBuilderFactory>()
                 .AddSingleton<IUniverseBuilder, UniverseBuilder>()
                 .AddSingleton<IProcedureBuilder, ProcedureBuilder>()
                 .AddSingleton(_ => MessageBus.MessageBus.GetMessageBus())
                 .AddSingleton<IFileSystem, FileSystem>()
-                .AddSingleton<IStore<SavedGame, GameContainer>, GameStore>();
+                .AddSingleton<IStore<SavedGame, IGameContainer>, GameStore>()
+                .AddSingleton<IFactory<GameType, IGameContainer>, GameContainerFactory>();
 
             return service;
         }

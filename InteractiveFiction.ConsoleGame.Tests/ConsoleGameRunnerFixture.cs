@@ -1,4 +1,5 @@
-﻿using InteractiveFiction.Business.Infrastructure.MessageBus;
+﻿using InteractiveFiction.Business.Infrastructure.Game;
+using InteractiveFiction.Business.Infrastructure.MessageBus;
 using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
 using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.ConsoleGame.Menu;
