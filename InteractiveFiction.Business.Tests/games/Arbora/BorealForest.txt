@@ -1,0 +1,6 @@
+﻿Type:LOCATION
+Title:Boreal Forest
+
+Description:This is a forest.
+
+LocationType:Region

@@ -1,0 +1,6 @@
+﻿Type:LOCATION
+Title:Old Forest
+
+Description:A mystical forest untouched by civilization.
+
+LocationType:Region
