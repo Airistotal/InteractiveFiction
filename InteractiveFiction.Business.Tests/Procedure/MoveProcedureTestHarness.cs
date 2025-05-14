@@ -1,4 +1,5 @@
 ﻿using InteractiveFiction.Business.Entity;
+using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.Business.Procedure.Argument;

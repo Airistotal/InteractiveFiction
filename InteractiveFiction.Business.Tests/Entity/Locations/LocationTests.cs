@@ -1,9 +1,10 @@
 ﻿using InteractiveFiction.Business.Entity;
+using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
-namespace InteractiveFiction.Business.Tests.Entity
+namespace InteractiveFiction.Business.Tests.Entity.Locations
 {
     public class LocationTests
     {
@@ -86,11 +87,14 @@ namespace InteractiveFiction.Business.Tests.Entity
         }
 
         [Fact]
-        public void When_GetDescription_GetsNameDescAndDirections()
+        public void When_GetDescription_GetsNameDescDirectionsAndChildren()
         {
+            var child = new Mock<IEntity>();
+            child.Setup(_ => _.GetName()).Returns("name");
             var sut = GetLocation();
             sut.Title = "fdsa";
             sut.Description = "zxcv";
+            sut.Children.Add(child.Object);
             sut.AddPath(Direction.North, GetLocation());
 
             var result = sut.GetFullDescription();
@@ -98,6 +102,7 @@ namespace InteractiveFiction.Business.Tests.Entity
             Assert.Contains("North", result);
             Assert.Contains(sut.Title, result);
             Assert.Contains(sut.Description, result);
+            Assert.Contains("name", result);
         }
 
         [Fact]

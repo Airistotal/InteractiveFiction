@@ -3,6 +3,7 @@ using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Tests.Utils;
+using InteractiveFiction.Business.Entity.Locations;
 
 namespace InteractiveFiction.Business.Tests.Existence
 {

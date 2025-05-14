@@ -3,7 +3,7 @@ using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.Business.Procedure.Argument;
 
-namespace InteractiveFiction.Business.Entity
+namespace InteractiveFiction.Business.Entity.Locations
 {
     public class Location : IEntity
     {
@@ -20,7 +20,8 @@ namespace InteractiveFiction.Business.Entity
         public string? Title { get; set; }
         public List<string> EntityNames { get; set; } = new();
 
-        public Location(ITextDecorator textDecorator) {
+        public Location(ITextDecorator textDecorator)
+        {
             this.textDecorator = textDecorator;
         }
 
@@ -49,6 +50,42 @@ namespace InteractiveFiction.Business.Entity
             Paths.Remove(direction);
         }
 
+        public virtual string GetFullDescription()
+        {
+            return textDecorator.Underline(Title ?? "No Title") + Environment.NewLine +
+                Description + Environment.NewLine + Environment.NewLine +
+                GetChildList() +
+                GetDirections();
+        }
+
+        private string GetChildList()
+        {
+            if (Children.Count <= 0)
+            {
+                return "";
+            }
+
+            var sentence = $"Here you can see ";
+            var childNames = Children.Select(_ => _.GetName()).ToList();
+            for (var i = 0; i < childNames.Count; i++)
+            {
+                if (i == 0)
+                {
+                    sentence += childNames[i];
+                }
+                else if (i < childNames.Count - 1)
+                {
+                    sentence += ", " + childNames[i];
+                }
+                else
+                {
+                    sentence += (i != 1 ? "," : "") + " and " + childNames[i]; 
+                }
+            }
+
+            return sentence + $".{Environment.NewLine}{Environment.NewLine}";
+        }
+
         public string GetDirections()
         {
             var directions = $"You can move:{Environment.NewLine}";
@@ -61,17 +98,10 @@ namespace InteractiveFiction.Business.Entity
             return directions;
         }
 
-        public virtual string GetFullDescription()
-        {
-            return textDecorator.Underline(Title ?? "No Title") + Environment.NewLine +
-                Description + Environment.NewLine + Environment.NewLine +
-                GetDirections();
-        }
-
         public override int GetHashCode()
         {
-            return Type.GetHashCode() + 
-                Title?.GetHashCode() ?? 0 + 
+            return Type.GetHashCode() +
+                Title?.GetHashCode() ?? 0 +
                 Description?.GetHashCode() ?? 0 +
                 EntityNames.GetHashCode();
         }
@@ -131,14 +161,14 @@ namespace InteractiveFiction.Business.Entity
 
         public bool Is(string id)
         {
-            return 
-                (!string.IsNullOrWhiteSpace(Title) && Title.Equals(id)) ||
-                (Guid.TryParse(id, out var guid) && Id.Equals(guid));
+            return
+                !string.IsNullOrWhiteSpace(Title) && Title.Equals(id) ||
+                Guid.TryParse(id, out var guid) && Id.Equals(guid);
         }
 
         public IEntity GetTarget(string target)
         {
-            foreach(var entity in Children)
+            foreach (var entity in Children)
             {
                 if (entity.Is(target))
                 {
@@ -147,6 +177,11 @@ namespace InteractiveFiction.Business.Entity
             }
 
             return NullEntity.Instance;
+        }
+
+        public string GetName()
+        {
+            return Title ?? "";
         }
     }
 }

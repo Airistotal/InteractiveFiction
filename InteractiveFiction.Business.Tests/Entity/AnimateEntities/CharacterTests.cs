@@ -1,7 +1,7 @@
-﻿using InteractiveFiction.Business.Entity;
+﻿using InteractiveFiction.Business.Entity.AnimateEntities;
 using InteractiveFiction.Business.Tests.Utils;
 
-namespace InteractiveFiction.Business.Tests.Entity
+namespace InteractiveFiction.Business.Tests.Entity.AnimateEntities
 {
     public class CharacterTests
     {

@@ -1,4 +1,5 @@
-﻿using InteractiveFiction.Business.Existence;
+﻿using InteractiveFiction.Business.Entity.Locations;
+using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.Business.Procedure.Argument;
@@ -81,6 +82,7 @@ namespace InteractiveFiction.Business.Entity
         }
 
         public abstract string GetFullDescription();
+        public abstract string GetName();
 
         public abstract bool Is(string id);
     }
