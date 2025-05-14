@@ -1,4 +1,4 @@
-﻿namespace InteractiveFiction.Business.Infrastructure
+﻿namespace InteractiveFiction.Business.Infrastructure.Game
 {
     public class GameArchetype
     {

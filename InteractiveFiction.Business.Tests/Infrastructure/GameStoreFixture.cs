@@ -1,18 +1,21 @@
 ﻿using InteractiveFiction.Business.Infrastructure;
-using InteractiveFiction.ConsoleGame;
+using InteractiveFiction.Business.Infrastructure.Game;
+using Moq;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace InteractiveFiction.Business.Tests.Infrastructure
 {
     internal class GameStoreFixture
     {
-        private GameContainer? gameContainer;
-
+        private IGameContainer createdGameContainer;
         private GameStore? sut;
 
         private readonly MockFileSystem fileSystem = new(new Dictionary<string, MockFileData>());
+        private readonly Mock<IFactory<GameType, IGameContainer>> gameContainerFactory = new();
 
-        private GameStoreFixture() { }
+        private GameStoreFixture() {
+            gameContainerFactory.Setup(x => x.Create(GameType.Generic)).Returns(new Mock<IGameContainer>().Object);
+        }
 
         public static GameStoreFixture GetFixture() { return new GameStoreFixture(); }
 
@@ -30,7 +33,7 @@ namespace InteractiveFiction.Business.Tests.Infrastructure
         {
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var saveDir = appData + "/IF/saves";
-            var file = new MockFileData("{}");
+            var file = new MockFileData("{\"universe\":\"\", \"characterAgent\":\"\", \"character\":\"\"}");
 
             fileSystem.AddDirectory(saveDir);
             fileSystem.AddFile(saveDir + "/location.json", file);
@@ -40,24 +43,24 @@ namespace InteractiveFiction.Business.Tests.Infrastructure
 
         public GameStoreFixture Load()
         {
-            sut = new GameStore(fileSystem);
+            sut = new GameStore(fileSystem, gameContainerFactory.Object);
 
-            gameContainer = sut.Load(sut.Keys.First());
+            createdGameContainer = sut.Load(sut.Keys.First());
 
             return this;
         }
 
         public void AssertLoadedFromAppData()
         {
-            Assert.NotNull(gameContainer);
+            Assert.NotNull(createdGameContainer);
         }
 
         public void AssertLoadThrows<T>() where T : Exception
         {
             Assert.Throws<T>(() => {
-                sut = new GameStore(fileSystem);
+                sut = new GameStore(fileSystem, gameContainerFactory.Object);
 
-                gameContainer = sut.Load(new SavedGame());
+                createdGameContainer = sut.Load(new SavedGame());
             });
         }
     }

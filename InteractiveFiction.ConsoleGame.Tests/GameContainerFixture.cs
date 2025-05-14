@@ -1,6 +1,7 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Infrastructure;
+using InteractiveFiction.Business.Infrastructure.Game;
 using InteractiveFiction.Business.Infrastructure.MessageBus;
 using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
 using InteractiveFiction.Business.Procedure;

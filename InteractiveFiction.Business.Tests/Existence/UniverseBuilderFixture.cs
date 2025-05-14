@@ -127,6 +127,10 @@ namespace InteractiveFiction.Business.Tests.Existence
 
         private Mock<IFileSystem> GetFileSystemMock()
         {
+            var directory = new Mock<IDirectory>();
+            directory.Setup(x => x.Exists("./games/Arbora")).Returns(true);
+            directory.Setup(x => x.Exists("./games/Erogund")).Returns(true);
+
             var file = new Mock<IFile>();
             file.Setup(x => x.ReadAllText(It.Is<string>(y => y.EndsWith("_map.json")))).Returns(regionMap);
             file.Setup(x => x.Exists(It.Is<string>(y => y.EndsWith("_map.json")))).Returns(true);
@@ -139,6 +143,7 @@ namespace InteractiveFiction.Business.Tests.Existence
 
             var fs = new Mock<IFileSystem>();
             fs.Setup(x => x.File).Returns(file.Object);
+            fs.Setup(x => x.Directory).Returns(directory.Object);
 
             return fs;
         }

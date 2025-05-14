@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace InteractiveFiction.Business.Infrastructure
+namespace InteractiveFiction.Business.Infrastructure.Game
 {
     [Serializable]
     public class NoGameException : Exception

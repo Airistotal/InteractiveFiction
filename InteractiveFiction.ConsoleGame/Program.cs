@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using InteractiveFiction.Business.Goal;
 using InteractiveFiction.Business.Infrastructure;
+using InteractiveFiction.Business.Infrastructure.Game;
 using InteractiveFiction.ConsoleGame;
 using InteractiveFiction.ConsoleGame.Menu;
 using InteractiveFiction.ConsoleGame.Sanitize.Argument;

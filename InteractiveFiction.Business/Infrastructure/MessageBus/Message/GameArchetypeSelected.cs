@@ -1,4 +1,6 @@
-﻿namespace InteractiveFiction.Business.Infrastructure.MessageBus.Message
+﻿using InteractiveFiction.Business.Infrastructure.Game;
+
+namespace InteractiveFiction.Business.Infrastructure.MessageBus.Message
 {
     public class GameArchetypeSelected : IMessage
     {

@@ -5,7 +5,7 @@ using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
 using InteractiveFiction.Business.Procedure;
 using System.Diagnostics.CodeAnalysis;
 
-namespace InteractiveFiction.ConsoleGame
+namespace InteractiveFiction.Business.Infrastructure.Game
 {
     public class GameContainer : IGameContainer
     {
@@ -26,8 +26,8 @@ namespace InteractiveFiction.ConsoleGame
             this.universeBuilder = universeBuilder;
             this.entityBuilder = entityBuilder;
 
-            this.messageBus.Register<GameArchetypeSelected>(this.HandleGameArchetypeSelected);
-            this.messageBus.Register<CharacterInfoSelected>(this.HandleCharacterInfoSelected);
+            this.messageBus.Register<GameArchetypeSelected>(HandleGameArchetypeSelected);
+            this.messageBus.Register<CharacterInfoSelected>(HandleCharacterInfoSelected);
         }
 
         public void HandleGameArchetypeSelected(IMessage message)
@@ -108,6 +108,22 @@ namespace InteractiveFiction.ConsoleGame
             CheckIsReady();
 
             universe.Tick();
+        }
+
+        public SaveData GetSaveData()
+        {
+            return new SaveData() {
+                Universe = universe,
+                Character = character,
+                CharacterAgent = characterAgent,
+            };
+        }
+
+        public void Load(SaveData data)
+        {
+            universe = data.Universe;
+            character = data.Character;
+            characterAgent = data.CharacterAgent;
         }
     }
 }

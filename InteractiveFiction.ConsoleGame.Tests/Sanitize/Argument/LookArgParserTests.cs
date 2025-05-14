@@ -6,7 +6,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Argument
 {
     public class LookArgParserTests
     {
-        private static IEnumerable<object[]> Data()
+        public static IEnumerable<object[]> Data()
         {
             yield return new object[] { new List<string> { "w", "west", "WeSt" }, new LookArg(Direction.West, "") };
             yield return new object[] { new List<string> { "e", "east", "EaSt" }, new LookArg(Direction.East, "") };
