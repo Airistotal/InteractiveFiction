@@ -1,6 +1,7 @@
 ﻿using InteractiveFiction.Business.Infrastructure.MessageBus;
 using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
 using InteractiveFiction.ConsoleGame.Menu;
+using InteractiveFiction.ConsoleGame.Sanitize.Commands;
 
 namespace InteractiveFiction.ConsoleGame
 {
@@ -9,17 +10,20 @@ namespace InteractiveFiction.ConsoleGame
         private readonly IGameMenu gameMenu;
         private readonly IGameContainer gameContainer;
         private readonly IMessageBus messageBus;
+        private readonly IProcedureCommandParser commandParser;
 
         private bool isInGame = false;
 
         public ConsoleGameRunner(
             IMessageBus messageBus,
             IGameMenu gameMenu,
-            IGameContainer gameContainer)
+            IGameContainer gameContainer,
+            IProcedureCommandParser commandParser)
         {
             this.gameMenu = gameMenu;
             this.gameContainer = gameContainer;
             this.messageBus = messageBus;
+            this.commandParser = commandParser;
 
             this.messageBus.Register<MoveToGameMessage>(this.HandleMoveToGame);
 
@@ -44,7 +48,7 @@ namespace InteractiveFiction.ConsoleGame
                 this.gameMenu.Perform(input);
             } else
             {
-                this.gameContainer.Perform(input);
+                this.gameContainer.Perform(commandParser.Parse(input));
             }
         }
 

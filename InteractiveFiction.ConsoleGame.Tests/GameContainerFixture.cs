@@ -4,8 +4,8 @@ using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Infrastructure.MessageBus;
 using InteractiveFiction.Business.Infrastructure.MessageBus.Message;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.ConsoleGame.Sanitize.Commands;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InteractiveFiction.ConsoleGame.Tests
 {
@@ -16,7 +16,6 @@ namespace InteractiveFiction.ConsoleGame.Tests
         private readonly Mock<IUniverseBuilder> universeBuilder = new();
         private readonly Mock<IUniverse> universe = new();
         private readonly Mock<IAgent> character = new();
-        private readonly Mock<IProcedureCommandParser> procedureCommandParser = new();
 
         private GameContainer sut;
 
@@ -70,7 +69,7 @@ namespace InteractiveFiction.ConsoleGame.Tests
 
         public GameContainerFixture Perform()
         {
-            sut.Perform("");
+            sut.Perform(new ProcedureCommand());
 
             return this;
         }
@@ -117,6 +116,7 @@ namespace InteractiveFiction.ConsoleGame.Tests
             universe.Verify(_ => _.Tick(), Times.Once);
         }
 
+        [MemberNotNull(nameof(sut))]
         private void CreateGameContainer()
         {
             universeBuilder.Setup(_ => _.Create(It.IsAny<string>())).Returns(universe.Object);
@@ -126,14 +126,8 @@ namespace InteractiveFiction.ConsoleGame.Tests
             entityBuilder.Setup(_ => _.Character(It.IsAny<string>())).Returns(entityBuilder.Object);
             entityBuilder.Setup(_ => _.Build()).Returns(character.As<IEntity>().Object);
 
-            procedureCommandParser.Setup(_ => _.Parse(It.IsAny<string>())).Returns(
-                new ProcedureCommand()
-                {
-                    ProcedureType = ProcedureType.NULL
-                });
-
             sut = new GameContainer(
-                messageBus.Object, universeBuilder.Object, entityBuilder.Object, procedureCommandParser.Object);
+                messageBus.Object, universeBuilder.Object, entityBuilder.Object);
         }
     }
 }
