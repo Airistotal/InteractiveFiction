@@ -1,9 +1,11 @@
-﻿namespace InteractiveFiction.Business.Procedure
+﻿using InteractiveFiction.Business.Procedure.Argument;
+
+namespace InteractiveFiction.Business.Procedure
 {
     public class NullProcedure : IProcedure
     {
         public void Perform() { }
 
-        public IProcedure With<T>(T[] args) { return this; }
+        public IProcedure With(List<IProcedureArg> args) { return this; }
     }
 }

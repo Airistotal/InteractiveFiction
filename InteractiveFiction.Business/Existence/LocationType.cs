@@ -8,6 +8,7 @@
         Mountain,
         Region,
         Village,
-        Building
+        Building,
+        Spawn
     }
 }

@@ -11,11 +11,11 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         public void When_GetMainMenuScreen_ReturnsIdleText()
         {
             var textLoader = new Mock<ITextLoader>();
-            textLoader.Setup(_ => _.GetText("menu:idle")).Returns("Main Menu");
+            textLoader.Setup(_ => _.GetText("menu.idle")).Returns("Main Menu");
             var sut = new MainMenuState(new Mock<IMenuStateFactory>().Object, textLoader.Object);
 
             Assert.Equal("Main Menu", sut.GetScreen());
-            textLoader.Verify(_ => _.GetText("menu:idle"), Times.Once);
+            textLoader.Verify(_ => _.GetText("menu.idle"), Times.Once);
         }
 
         [Fact]

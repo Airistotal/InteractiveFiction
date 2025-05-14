@@ -1,6 +1,9 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Procedure;
+using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.Business.Tests.Utils;
+using Moq;
 
 namespace InteractiveFiction.Business.Tests.Entity
 {
@@ -9,7 +12,7 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void When_BuildCharacter_HasAllAttributes()
         {
-            var entityBuilder = new EntityBuilder(DefaultMocks.GetProcedureBuilderMock().Object);
+            var entityBuilder = GetEntityBuilder();
 
             var entity = (Character) entityBuilder.FromLines(new List<string>() {
                 "Type:CHARACTER",
@@ -52,9 +55,28 @@ namespace InteractiveFiction.Business.Tests.Entity
         }
 
         [Fact]
+        public void When_BuildEntity_CreatesDefaultCapabilities()
+        {
+            var procedureBuilder = DefaultMocks.GetProcedureBuilderMock();
+            var entityBuilder = GetEntityBuilder(procedureBuilder);
+            var entity = (Character)entityBuilder.FromLines(new List<string>() {
+                "Type:CHARACTER",
+                "Name:King Leon",
+                "Description: The King of the Misty Castle",
+                $"DefaultCapabilities: {ProcedureType.Look},{ProcedureType.Move}"
+            }).Build();
+            entity.Universe = new Mock<IUniverse>().Object;
+
+            entity.Perform(ProcedureType.Look, new List<IProcedureArg>());
+
+            procedureBuilder.Verify(_ => _.type(It.Is<ProcedureType>(_ => _ == ProcedureType.Look)), Times.Once);
+            procedureBuilder.Verify(_ => _.type(It.Is<ProcedureType>(_ => _ == ProcedureType.Move)), Times.Once);
+        }
+
+        [Fact]
         public void When_BuildLocation_HasAllAttributes()
         {
-            var entityBuilder = new EntityBuilder(DefaultMocks.GetProcedureBuilderMock().Object);
+            var entityBuilder = GetEntityBuilder();
 
             var entity = (Location)entityBuilder.FromLines(new List<string>() {
                 "Type:LOCATION",
@@ -68,6 +90,13 @@ namespace InteractiveFiction.Business.Tests.Entity
             Assert.Equal("This is the Misty Castle.The centre of the Kingdom and the seat of power.", entity.Description);
             Assert.Equal(LocationType.Building, entity.Type);
             Assert.Equal(new List<string> { "KingLeon" }, entity.EntityNames);
+        }
+
+        private EntityBuilder GetEntityBuilder(Mock<IProcedureBuilder>? procedureBuilder = null)
+        {
+            return new EntityBuilder(
+                procedureBuilder?.Object ?? DefaultMocks.GetProcedureBuilderMock().Object, 
+                DefaultMocks.GetTextDecorator().Object);
         }
     }
 }

@@ -23,8 +23,8 @@ namespace InteractiveFiction.ConsoleGame.Menu.State
 
         public string GetScreen()
         {
-            var screen = textLoader.GetText("menu:new_game:intro");
-            var optionTemplate = textLoader.GetText("menu:new_game:option_template");
+            var screen = textLoader.GetText("menu.new_game.intro");
+            var optionTemplate = textLoader.GetText("menu.new_game.option_template");
 
             for (int i = 0; i < gameArchetypes.Count; i++)
             {

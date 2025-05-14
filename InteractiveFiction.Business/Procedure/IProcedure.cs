@@ -1,8 +1,10 @@
-﻿namespace InteractiveFiction.Business.Procedure
+﻿using InteractiveFiction.Business.Procedure.Argument;
+
+namespace InteractiveFiction.Business.Procedure
 {
     public interface IProcedure
     {
-        IProcedure With<T>(T[] args);
+        IProcedure With(List<IProcedureArg> args);
         void Perform();
     }
 }

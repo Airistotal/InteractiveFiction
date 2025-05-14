@@ -18,7 +18,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         }
 
         [Fact]
-        public void When_NewGameNameAction1_NoName_ReturnsSelf()
+        public void When_NewGameNameAnyAction_NoName_ReturnsSelf()
         {
             var sut = GetNewGameNameMenuState();
 
@@ -28,7 +28,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         }
 
         [Fact]
-        public void When_NewGameNameAction1_EmptyName_ReturnsSelf()
+        public void When_NewGameNameAnyAction_EmptyName_ReturnsSelf()
         {
             var sut = GetNewGameNameMenuState();
 
@@ -38,18 +38,18 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
         }
 
         [Fact]
-        public void When_NewGameNameAction1_TransitionsToNewGameNameState()
+        public void When_NewGameNameAnyAction_TransitionsToCreateCharacterState()
         {
             var menuStateFactory = new Mock<IMenuStateFactory>();
             var sut = GetNewGameNameMenuState(menuStateFactory);
 
             var transition = sut.Transition(Command.ACTION1, "Game 1");
 
-            menuStateFactory.Verify(_ => _.GetInstance(MenuStateType.CharacterSelect), Times.Once);
+            menuStateFactory.Verify(_ => _.GetInstance(MenuStateType.CreateCharacter), Times.Once);
         }
 
         [Fact]
-        public void When_NewGameNameAction1_SendsSelectionEvent()
+        public void When_NewGameNameAnyAction_SendsSelectionEvent()
         {
             var messageBus = new Mock<IMessageBus>();
             var sut = GetNewGameNameMenuState(messageBus: messageBus);
@@ -70,7 +70,7 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu.State
             }
 
             var textLoader = new Mock<ITextLoader>();
-            textLoader.Setup(_ => _.GetText("menu:new_game:game_name_prompt")).Returns("Enter game name:");
+            textLoader.Setup(_ => _.GetText("menu.new_game.game_name_prompt")).Returns("Enter game name:");
 
             if (messageBus == null)
             {

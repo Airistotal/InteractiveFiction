@@ -4,11 +4,11 @@ namespace InteractiveFiction.Business.Existence
 {
     public class Instant
     {
-        public IEntity Root { get; }
+        public Location Spawn { get; }
 
-        public Instant(IEntity root)
+        public Instant(Location spawn)
         {
-            Root = root;
+            Spawn = spawn;
         }
     }
 }

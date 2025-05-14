@@ -1,0 +1,13 @@
+{
+    "menu": {
+        "idle": "Main Menu \n 1) Load Game \n 2) New Game",
+        "new_game": {
+            "intro": "New Game \n Which game would you like to start?",
+            "game_name_prompt": "Enter game name: ",
+            "option_template": "{0}) {1}"
+        },
+        "new_character": {
+            "character_name_prompt": "Enter character name:"
+        }
+    }
+}

@@ -1,15 +1,12 @@
-﻿using InteractiveFiction.Business.Procedure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using InteractiveFiction.Business.Infrastructure;
+using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.Business.Entity
 {
-    public class InanimateEntity : BaseEntity
+    public abstract class InanimateEntity : BaseEntity
     {
-        public InanimateEntity(IProcedureBuilder? procedureBuilder) : base(procedureBuilder)
+        public InanimateEntity(IProcedureBuilder procedureBuilder, ITextDecorator textDecorator) 
+            : base(procedureBuilder, textDecorator)
         {
         }
     }

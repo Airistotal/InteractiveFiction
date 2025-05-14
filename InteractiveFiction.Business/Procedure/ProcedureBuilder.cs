@@ -1,47 +1,45 @@
 ﻿using InteractiveFiction.Business.Entity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InteractiveFiction.Business.Procedure
 {
     public class ProcedureBuilder : IProcedureBuilder
     {
-        private ProcedureType procType;
-        private IEntity? procAgent;
-        private IEntity? procTarget;
+        private ProcedureType Type;
+        private IEntity? Agent;
 
         public IProcedureBuilder type(ProcedureType type)
         {
-            this.procType = type;
+            Type = type;
 
             return this;
         }
 
         public IProcedureBuilder agent(IEntity agent)
         {
-            this.procAgent = agent;
-
-            return this;
-        }
-
-        public IProcedureBuilder target(IEntity target)
-        {
-            this.procTarget = target;
+            Agent = agent;
 
             return this;
         }
 
         public IProcedure build()
         {
-            if (procAgent == null || procTarget == null)
-            {
-                throw new Exception("Unable to make procedure with both an agent and a target");
-            }
+            CheckAgent();
 
-            switch (this.procType)
+            return Type switch
             {
-                case ProcedureType.Move:
-                    return new MoveProcedure();
-                default:
-                    return new NullProcedure();
+                ProcedureType.Look => new LookProcedure(Agent),
+                ProcedureType.Move => new MoveProcedure(Agent),
+                _ => new NullProcedure(),
+            };
+        }
+
+        [MemberNotNull(nameof(Agent))]
+        private void CheckAgent()
+        {
+            if (Agent == null)
+            {
+                throw new ProcedureException("Unable to build procedure without agent");
             }
         }
     }

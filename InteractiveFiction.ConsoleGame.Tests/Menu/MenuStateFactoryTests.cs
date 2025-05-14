@@ -11,8 +11,10 @@ namespace InteractiveFiction.ConsoleGame.Tests.Menu
         [Theory]
         [InlineData(MenuStateType.MainMenu, typeof(MainMenuState))]
         [InlineData(MenuStateType.NewGame, typeof(NewGameMenuState))]
+        [InlineData(MenuStateType.NewGameName, typeof(NewGameNameMenuState))]
         [InlineData(MenuStateType.LoadGame, typeof(LoadGameMenuState))]
         [InlineData(MenuStateType.CharacterSelect, typeof(CharacterSelectMenuState))]
+        [InlineData(MenuStateType.CreateCharacter, typeof(CreateCharacterMenuState))]
         public void When_RequestMainMenu_CreatesMainMenu(MenuStateType type, Type instanceType)
         {
             var sut = new MenuStateFactory(

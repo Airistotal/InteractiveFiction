@@ -1,4 +1,4 @@
-﻿namespace InteractiveFiction.Business.Exceptions
+﻿namespace InteractiveFiction.Business.Procedure
 {
     public class NullAgentException : Exception
     {

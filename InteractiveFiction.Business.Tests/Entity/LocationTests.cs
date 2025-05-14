@@ -10,10 +10,9 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenCreateWithPropertiesGetsProperties()
         {
-            var sut = new Location(DefaultMocks.GetProcedureBuilderMock().Object) {
-                Title = "Italy",
-                Description = "Mama mia!"
-            };
+            var sut = GetLocation();
+            sut.Title = "Italy";
+            sut.Description = "Mama mia!";
 
             Assert.Equal("Italy", sut.Title);
             Assert.Equal("Mama mia!", sut.Description);
@@ -22,18 +21,18 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenAddChildToLocationCanHaveChildren()
         {
-            Location location = new(DefaultMocks.GetProcedureBuilderMock().Object);
-            location.Children.Add(new Mock<IEntity>().Object);
+            var sut = GetLocation();
+            sut.Children.Add(new Mock<IEntity>().Object);
 
-            Assert.NotNull(location.Children);
-            Assert.NotEmpty(location.Children);
+            Assert.NotNull(sut.Children);
+            Assert.NotEmpty(sut.Children);
         }
 
         [Fact]
         public void WhenAddPathGoHasLocationInDirection()
         {
-            Location location = new(DefaultMocks.GetProcedureBuilderMock().Object);
-            Location locationInDirection = new(DefaultMocks.GetProcedureBuilderMock().Object);
+            var location = GetLocation();
+            var locationInDirection = GetLocation();
 
             location.AddPath(Direction.North, locationInDirection);
             var locInDir = location.Go(Direction.North);
@@ -44,25 +43,92 @@ namespace InteractiveFiction.Business.Tests.Entity
         [Fact]
         public void WhenAddNullPathIgnores()
         {
-            Location location = new(DefaultMocks.GetProcedureBuilderMock().Object);
+            var sut = GetLocation();
 
-            location.AddPath(Direction.North, null);
-            var locInDir = location.Go(Direction.North);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            sut.AddPath(Direction.North, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+            var locInDir = sut.Go(Direction.North);
 
-            Assert.Equal(Location.Empty().Description, locInDir.Description);
+            Assert.Equal(NullLocation.Instance.Description, locInDir.Description);
         }
 
         [Fact]
         public void WhenDestroyPathGoReturnsNullLocationInDirection()
         {
-            Location location = new(DefaultMocks.GetProcedureBuilderMock().Object);
-            Location locationInDirection = new(DefaultMocks.GetProcedureBuilderMock().Object);
+            var location = GetLocation();
+            var locationInDirection = GetLocation();
 
             location.AddPath(Direction.North, locationInDirection);
             location.DestroyPath(Direction.North);
             var locInDir = location.Go(Direction.North);
 
-            Assert.Equal(Location.Empty().Description, locInDir.Description);
+            Assert.Equal(NullLocation.Instance.Description, locInDir.Description);
+        }
+
+        [Fact]
+        public void When_SameProperties_AreEqual()
+        {
+            Assert.Equal(NullLocation.Instance, NullLocation.Instance);
+        }
+
+        [Fact]
+        public void When_GetDirections_ReturnsStringOfDirections()
+        {
+            var sut = GetLocation();
+            sut.AddPath(Direction.North, NullLocation.Instance);
+            sut.AddPath(Direction.West, NullLocation.Instance);
+
+            var result = sut.GetDirections();
+
+            Assert.Contains("North", result);
+            Assert.Contains("West", result);
+        }
+
+        [Fact]
+        public void When_GetDescription_GetsNameDescAndDirections()
+        {
+            var sut = GetLocation();
+            sut.Title = "fdsa";
+            sut.Description = "zxcv";
+            sut.AddPath(Direction.North, GetLocation());
+
+            var result = sut.GetFullDescription();
+
+            Assert.Contains("North", result);
+            Assert.Contains(sut.Title, result);
+            Assert.Contains(sut.Description, result);
+        }
+
+        [Fact]
+        public void When_GetTargetFound_ReturnsTarget()
+        {
+            var target = new Mock<IEntity>();
+            target.Setup(_ => _.Is(It.IsAny<string>())).Returns(true);
+            var sut = GetLocation();
+            sut.Children.Add(target.Object);
+
+            var found = sut.GetTarget("target");
+
+            Assert.Equal(target.Object, found);
+        }
+
+        [Fact]
+        public void When_GetTargetNotFound_ReturnsNullEntity()
+        {
+            var target = new Mock<IEntity>();
+            target.Setup(_ => _.Is(It.IsAny<string>())).Returns(false);
+            var sut = GetLocation();
+            sut.Children.Add(target.Object);
+
+            var found = sut.GetTarget("target");
+
+            Assert.Equal(NullEntity.Instance, found);
+        }
+
+        private Location GetLocation()
+        {
+            return new Location(DefaultMocks.GetTextDecorator().Object);
         }
     }
 }

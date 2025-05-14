@@ -1,10 +1,10 @@
-﻿using InteractiveFiction.Business.Procedure;
+﻿using InteractiveFiction.Business.Infrastructure;
+using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.Business.Entity
 {
-    public abstract class AnimateEntity : BaseEntity
+    public abstract class AnimateEntity : BaseEntity, IEntity
     {
-
         // Identity Attributes
         public string Name { get; set; } = "";
 
@@ -42,11 +42,12 @@ namespace InteractiveFiction.Business.Entity
 
         public int Groundedness { get; set; }
 
-        protected AnimateEntity(IProcedureBuilder? procedureBuilder) : base(procedureBuilder)
+        protected AnimateEntity(IProcedureBuilder procedureBuilder, ITextDecorator textDecorator) 
+            : base(procedureBuilder, textDecorator)
         {
         }
 
-        public void SetLocation(Location location)
+        public new void SetLocation(Location location)
         {
             this.Location = location;
 
@@ -55,7 +56,8 @@ namespace InteractiveFiction.Business.Entity
                 Capabilities.Remove(ProcedureType.Move);
             }
 
-            AddCapability(ProcedureType.Move, this.Location);
+            AddCapability(ProcedureType.Move);
+            //AddCapability(ProcedureType.Look);
         }
     }
 }

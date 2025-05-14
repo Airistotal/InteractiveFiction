@@ -6,7 +6,6 @@ namespace InteractiveFiction.Business.Procedure
     {
         IProcedureBuilder agent(IEntity agent);
         IProcedure build();
-        IProcedureBuilder target(IEntity target);
         IProcedureBuilder type(ProcedureType type);
     }
 }
