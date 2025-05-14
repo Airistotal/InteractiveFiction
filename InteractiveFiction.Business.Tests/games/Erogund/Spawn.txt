@@ -1,6 +1,0 @@
-﻿Type:LOCATION
-Title:Spawn
-
-Description:Welcome to Arbora!
-
-LocationType:Spawn

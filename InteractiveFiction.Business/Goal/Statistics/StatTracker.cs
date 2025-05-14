@@ -1,46 +1,49 @@
-﻿using InteractiveFiction.Business.Goal.Statistics;
-using InteractiveFiction.Business.Procedure;
+﻿using InteractiveFiction.Business.Infrastructure;
 
 namespace InteractiveFiction.Business.Goal
 {
-    public class StatTracker : ITracker
+    public class StatTracker : IObserver<IStat>, IObservable<IStat>
     {
-        IDictionary<Type, IStat> stats = new Dictionary<Type, IStat>();
-        IDictionary<Type, IList<IStatSubscriber>> subscribers = new Dictionary<Type, IList<IStatSubscriber>>();
+        private readonly IDictionary<Type, IStat> stats = new Dictionary<Type, IStat>();
+        private readonly IList<IObserver<IStat>> observers = new List<IObserver<IStat>>();
 
         public IDictionary<Type, IStat> GetStats()
         {
             return stats;
         }
 
-        public void Subscribe<T>(IStatSubscriber subscriber) where T : IStat
+        public void OnCompleted()
         {
-            if (!subscribers.ContainsKey(typeof(T)))
-            {
-                subscribers.Add(typeof(T), new List<IStatSubscriber>());
-            }
-
-            subscribers[typeof(T)].Add(subscriber);
+            throw new NotImplementedException();
         }
 
-        public void Track(IProcedure procedure)
+        public void OnError(Exception error)
         {
-            IStat stat = procedure.GetAsStat();
+            throw new NotImplementedException();
+        }
+
+        public void OnNext(IStat stat)
+        {
             if (!stats.ContainsKey(stat.GetType()))
             {
                 stats.Add(stat.GetType(), stat);
-            } else
+            }
+            else
             {
                 stats[stat.GetType()].Add(stat);
             }
-            
-            if (subscribers.ContainsKey(stat.GetType()))
+
+            foreach (IObserver<IStat> observer in observers)
             {
-                foreach (IStatSubscriber statSubscriber in subscribers[stat.GetType()])
-                {
-                    statSubscriber.callback(stats[stat.GetType()]);
-                }
+                observer.OnNext(stats[stat.GetType()]);
             }
+        }
+
+        public IDisposable Subscribe(IObserver<IStat> observer)
+        {
+            observers.Add(observer);
+
+            return new DefaultObserverRemover(observers, observer);
         }
     }
 }

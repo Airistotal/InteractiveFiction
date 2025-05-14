@@ -1,0 +1,22 @@
+﻿body {
+    color: lightgray;
+}
+
+.button {
+    display: block;
+    background-color: #3a4041;
+    border-bottom: solid #408c5e 2px;
+    border-left: solid #408c5e 2px;
+    box-shadow: black -2px 2px 7px;
+    border-radius: 6px;
+    padding: 10px;
+    margin: auto;
+    width: fit-content;
+    cursor: pointer;
+    text-decoration: none;
+    color: orange;
+}
+
+    .button:hover {
+        color: orange;
+    }

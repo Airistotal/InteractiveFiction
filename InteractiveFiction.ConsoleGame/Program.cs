@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using InteractiveFiction.Business.Goal;
 using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.ConsoleGame;
 using InteractiveFiction.ConsoleGame.Menu;
@@ -19,6 +20,7 @@ var serviceProvider = new ServiceCollection()
     .AddSingleton<IProcedureCommandParser, ProcedureCommandParser>()
     .AddSingleton<IArgParserFactory, ArgParserFactory>()
     .AddSingleton<ITextDecorator, ConsoleTextDecorator>()
+    .AddSingleton<IObserverFactory, ObserverFactory>()
     .BuildServiceProvider();
 
 var gameRunner = serviceProvider.GetService<IConsoleGameRunner>();

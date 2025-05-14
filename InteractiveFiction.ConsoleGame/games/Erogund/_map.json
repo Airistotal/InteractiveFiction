@@ -1,0 +1,6 @@
+﻿{
+    "QuaintVillage": "North;OldFarmstead,East;MistyCastle",
+    "OldFarmstead": "South;QuaintVillage,SouthEast;MistyCastle",
+    "MistyCastle": "West;QuaintVillage,NorthWest;OldFarmstead",
+    "Spawn": "West;MistyCastle"
+}

@@ -1,0 +1,9 @@
+﻿{
+    "Type": "LOCATION",
+    "Title": "Kobold Den",
+    "Description": "This is a den of kobold",
+
+    "LocationType": "Region",
+
+    "Entities": "Kobold,Kobold"
+}

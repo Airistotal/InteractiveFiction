@@ -2,14 +2,18 @@
 using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Goal;
+using InteractiveFiction.Business.Infrastructure;
 
 namespace InteractiveFiction.Business.Procedure.Movement
 {
-    public class MoveProcedure : IProcedure
+    public class MoveProcedure : IProcedure, IObservable<IStat>
     {
         private readonly IAgent Agent;
         private readonly IEntity Entity;
         private Direction MoveDirection;
+        private Location origin;
+        private Location destination;
+        private IList<IObserver<IStat>> observers = new List<IObserver<IStat>>();
 
         public MoveProcedure(IAgent agent)
         {
@@ -17,16 +21,32 @@ namespace InteractiveFiction.Business.Procedure.Movement
             {
                 Agent = agent;
                 Entity = entity;
-
+                origin = Entity.GetLocation();
+                destination = NullLocation.Instance;
             } else
             {
                 throw new Exception("Unable to move agent that isn't an entity.");
             }
         }
 
+        public IProcedure With(IList<IProcedureArg> args)
+        {
+            if (args != null && args.Count == 1 && args[0] is MoveArg mvArg)
+            {
+                MoveDirection = mvArg.Direction;
+            }
+            else
+            {
+                MoveDirection = Direction.NULL;
+            }
+
+            return this;
+        }
+
         public void Perform()
         {
-            var origin = Entity.GetLocation();
+            origin = Entity.GetLocation();
+            destination = origin.Go(MoveDirection);
             CheckOrigin(origin);
 
             if (MoveDirection == Direction.NULL)
@@ -35,7 +55,6 @@ namespace InteractiveFiction.Business.Procedure.Movement
                 return;
             }
 
-            var destination = origin.Go(MoveDirection);
             if (destination.Type == LocationType.NULL)
             {
                 AddNoMoveEvent();
@@ -46,6 +65,16 @@ namespace InteractiveFiction.Business.Procedure.Movement
             origin.Children.Remove(Entity);
             Entity.SetLocation(destination);
             AddMoveEvent(destination);
+
+            SendToSubscribers();
+        }
+
+        private void SendToSubscribers()
+        {
+            foreach(var observer in observers)
+            {
+                observer.OnNext(GetAsStat());
+            }
         }
 
         private void CheckOrigin(Location Origin)
@@ -72,23 +101,16 @@ namespace InteractiveFiction.Business.Procedure.Movement
             Agent.AddEvent($"You can't go {MoveDirection}. {origin.GetDirections()}");
         }
 
-        public IProcedure With(List<IProcedureArg> args)
-        {
-            if (args != null && args.Count == 1 && args[0] is MoveArg mvArg)
-            {
-                MoveDirection = mvArg.Direction;
-            }
-            else
-            {
-                MoveDirection = Direction.NULL;
-            }
-
-            return this;
-        }
-
         public IStat GetAsStat()
         {
-            throw new NotImplementedException();
+            return new MoveStat(destination.GetName());
+        }
+
+        public IDisposable Subscribe(IObserver<IStat> observer)
+        {
+            observers.Add(observer);
+
+            return new DefaultObserverRemover(observers, observer);
         }
     }
 }

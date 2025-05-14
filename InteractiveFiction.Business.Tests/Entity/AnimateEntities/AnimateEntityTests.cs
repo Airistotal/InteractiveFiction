@@ -1,5 +1,6 @@
 ﻿using InteractiveFiction.Business.Entity.AnimateEntities;
 using InteractiveFiction.Business.Entity.Locations;
+using InteractiveFiction.Business.Goal;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
@@ -48,7 +49,9 @@ namespace InteractiveFiction.Business.Tests.Entity.AnimateEntities
 
         private AnimateEntity GetAnimateEntity()
         {
-            return new Mock<AnimateEntity>(DefaultMocks.GetProcedureBuilderMock().Object).Object;
+            return new Mock<AnimateEntity>(
+                new Mock<IObserver<IStat>>().Object,
+                DefaultMocks.GetProcedureBuilderMock().Object).Object;
         }
     }
 }

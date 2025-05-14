@@ -1,5 +1,8 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Entity.Locations;
+using Newtonsoft.Json.Linq;
+using System.IO;
+using System.IO.Abstractions;
 
 namespace InteractiveFiction.Business.Existence
 {
@@ -9,11 +12,14 @@ namespace InteractiveFiction.Business.Existence
         private Location? spawn;
         private string? baseDir;
         private readonly Dictionary<string, Location> loadedLocations = new();
-        private readonly IEntityBuilderFactory entityBuilderFactory;
 
-        public UniverseBuilder(IEntityBuilderFactory entityBuilderFactory)
+        private readonly IEntityBuilderFactory entityBuilderFactory;
+        private readonly IFileSystem fileSystem;
+
+        public UniverseBuilder(IEntityBuilderFactory entityBuilderFactory, IFileSystem fileSystem)
         {
             this.entityBuilderFactory = entityBuilderFactory;
+            this.fileSystem = fileSystem;
         }
 
         public IUniverse Create(string name)
@@ -62,16 +68,18 @@ namespace InteractiveFiction.Business.Existence
 
         private List<string[]> ReadMapInfo()
         {
-            var filePath = baseDir + "/_map.txt";
-            var children = new List<string[]>();
-            if (!File.Exists(filePath))
+            var filePath = baseDir + "/_map.json";
+            if (!fileSystem.File.Exists(filePath))
             {
-                return children;
+                return new List<string[]>();
             }
 
-            foreach (string line in File.ReadLines(filePath))
+            var map = JObject.Parse(fileSystem.File.ReadAllText(filePath));
+            var children = new List<string[]>();
+
+            foreach (var mapInfo in map)
             {
-                children.Add(line.Split(":"));
+                children.Add(new string[] { mapInfo.Key, mapInfo.Value.Value<string>() });
             }
 
             return children;
@@ -89,10 +97,10 @@ namespace InteractiveFiction.Business.Existence
 
         private Location LoadLocationFromFile(string fileName)
         {
-            var fileLocation = baseDir + "/" + fileName + ".txt";
-            if (!File.Exists(fileLocation))
+            var fileLocation = baseDir + "/" + fileName + ".json";
+            if (!fileSystem.File.Exists(fileLocation))
             {
-                throw new Exception("Unable to load location " + fileLocation);
+                throw new Exception("Unable to find " + Directory.GetCurrentDirectory() + fileLocation);
             }
 
             var location = (Location)entityBuilderFactory.GetBuilder().From(fileLocation).Build();
@@ -112,8 +120,8 @@ namespace InteractiveFiction.Business.Existence
 
         private IEntity LoadEntity(string entityName)
         {
-            var fileLocation = baseDir + "/Entity/" + entityName + ".txt";
-            if (!File.Exists(fileLocation))
+            var fileLocation = baseDir + "/Entity/" + entityName + ".json";
+            if (!fileSystem.File.Exists(fileLocation))
             {
                 throw new Exception("Unable to load entity " + fileLocation);
             }

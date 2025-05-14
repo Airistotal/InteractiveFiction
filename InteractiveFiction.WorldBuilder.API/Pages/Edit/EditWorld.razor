@@ -1,0 +1,40 @@
+﻿@page "/editor/world"
+@using InteractiveFiction.Business.Entity.Locations;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+@inject ProtectedSessionStorage ProtectedSessionStore;
+
+<h2>Edit World: @world.Name</h2>
+
+<div class="actions">
+    <div class="button" @onclick="AddLocation">Add Location</div>
+    <select>
+        @foreach (var location in world.Locations)
+        {
+            <option value="@location.Id">@location.Title</option>
+        }
+    </select>
+    <div class="button">Edit</div>
+
+    <div class="button">Add Entity</div>
+    <select>
+        @foreach (var entity in world.Entities)
+        {
+            <option value="@entity.GetId()">@entity.GetName()</option>
+        }
+    </select>
+    <div class="button">Edit</div>
+</div>
+
+<div id="location-display">
+    @if (currentLocation != NullLocation.Instance)
+    {
+        <h3>
+            @currentLocation.Title
+        </h3>
+        <textarea>@currentLocation.Description</textarea>
+    }
+</div>
+
+@code {
+    
+}

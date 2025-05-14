@@ -1,8 +1,0 @@
-﻿Type:LOCATION
-Title:Misty Castle
-
-Description:This is the Misty Castle. The centre of the Kingdom and the seat of power.
-
-LocationType:Building
-
-Entities:KingLeon

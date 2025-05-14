@@ -4,7 +4,7 @@ namespace InteractiveFiction.Business.Procedure
 {
     public interface IProcedure
     {
-        IProcedure With(List<IProcedureArg> args);
+        IProcedure With(IList<IProcedureArg> args);
         IStat GetAsStat();
         void Perform();
     }

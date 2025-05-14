@@ -2,6 +2,7 @@
 using InteractiveFiction.Business.Entity.AnimateEntities;
 using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Goal;
 using InteractiveFiction.Business.Procedure;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
@@ -125,7 +126,10 @@ namespace InteractiveFiction.Business.Tests.Entity
 
         private EntityBuilder GetEntityBuilder(Mock<IFileSystem> fileSystem, Mock<IProcedureBuilder>? procedureBuilder = null)
         {
+
+
             return new EntityBuilder(
+                DefaultMocks.GetTrackerFactoryMock().Object,
                 procedureBuilder?.Object ?? DefaultMocks.GetProcedureBuilderMock().Object, 
                 DefaultMocks.GetTextDecorator().Object, 
                 fileSystem.Object);

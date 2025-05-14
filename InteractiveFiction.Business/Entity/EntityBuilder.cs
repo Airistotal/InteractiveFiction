@@ -1,6 +1,8 @@
 ﻿using InteractiveFiction.Business.Entity.AnimateEntities;
 using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Goal;
+using InteractiveFiction.Business.Goal.Questing;
 using InteractiveFiction.Business.Infrastructure;
 using InteractiveFiction.Business.Procedure;
 using Newtonsoft.Json.Linq;
@@ -15,14 +17,17 @@ namespace InteractiveFiction.Business.Entity
         private string? nameOverride;
         private EntityType type;
         private readonly IProcedureBuilder procedureBuilder;
+        private readonly IObserverFactory observerFactory;
         private readonly ITextDecorator textDecorator;
         private readonly IFileSystem fileSystem;
 
         public EntityBuilder(
+            IObserverFactory trackerFactory,
             IProcedureBuilder procedureBuilder, 
             ITextDecorator textDecorator,
             IFileSystem fileSystem)
         {
+            this.observerFactory = trackerFactory;
             this.procedureBuilder = procedureBuilder;
             this.textDecorator = textDecorator;
             this.fileSystem = fileSystem;
@@ -58,7 +63,8 @@ namespace InteractiveFiction.Business.Entity
         {
             CheckLoadedFile();
 
-            var character = new Character(procedureBuilder)
+            IObserver<IStat> questManager = observerFactory.Create(ObserverType.Quest);
+            var character = new Character((IQuestManager)questManager, questManager, procedureBuilder)
             {
                 Name = nameOverride ?? loadedFile.SelectToken("Name").Value<string>(),
                 Description = loadedFile.SelectToken("Description")?.Value<string>() ?? "",
@@ -102,7 +108,7 @@ namespace InteractiveFiction.Business.Entity
                 Title = loadedFile.SelectToken("Title").Value<string>(),
                 Description = loadedFile.SelectToken("Description").Value<string>(),
                 Type = (LocationType)Enum.Parse(typeof(LocationType), loadedFile.SelectToken("LocationType").Value<string>()),
-                EntityNames = loadedFile.SelectToken("Entities").Value<string>().Split(',').ToList(),
+                EntityNames = loadedFile.SelectToken("Entities")?.Value<string>()?.Split(',')?.ToList() ?? new List<string>(),
             };
         }
 

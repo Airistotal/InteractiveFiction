@@ -1,14 +1,15 @@
-﻿using InteractiveFiction.Business.Entity.Locations;
-using InteractiveFiction.Business.Infrastructure;
+﻿using InteractiveFiction.Business.Goal;
 using InteractiveFiction.Business.Procedure;
 
 namespace InteractiveFiction.Business.Entity.AnimateEntities
 {
     public abstract class AnimateEntity: BaseAgent
     {
-        protected AnimateEntity(IProcedureBuilder procedureBuilder) : base(procedureBuilder)
+        protected AnimateEntity(IObserver<IStat> tracker, IProcedureBuilder procedureBuilder) : base(tracker, procedureBuilder)
         {
         }
+
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         // Identity Attributes
         public string Name { get; set; } = "";
