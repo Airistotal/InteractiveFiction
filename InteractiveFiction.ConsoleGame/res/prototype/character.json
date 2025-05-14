@@ -1,0 +1,6 @@
+{
+    "Type": "CHARACTER",
+    "Name": "",
+    "Health": "10",
+    "DefaultCapabilities": "Look,Move,Attack"
+}

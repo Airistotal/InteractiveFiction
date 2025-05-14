@@ -1,6 +1,5 @@
 ﻿using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 using InteractiveFiction.ConsoleGame.Sanitize.Argument;
 using InteractiveFiction.ConsoleGame.Sanitize.Commands;
 using Moq;
@@ -17,6 +16,11 @@ namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Commands
         [InlineData("l w", ProcedureType.Look)]
         [InlineData("look", ProcedureType.Look)]
         [InlineData("lOoK", ProcedureType.Look)]
+        [InlineData("atTack", ProcedureType.Attack)]
+        [InlineData("ATTACK target", ProcedureType.Attack)]
+        [InlineData("atk", ProcedureType.Attack)]
+        [InlineData("atk ", ProcedureType.Attack)]
+        [InlineData("atk target", ProcedureType.Attack)]
         public void When_ParseInput_ReturnsProcedureCommand(string input, ProcedureType type)
         {
             var arg = new Mock<IProcedureArg>().Object;

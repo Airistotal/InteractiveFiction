@@ -31,8 +31,8 @@ namespace InteractiveFiction.Business.Tests.Existence
 
             var spawn = universe.GetInstant().Spawn;
             Assert.Single(spawn.Paths);
-            var quaintVillage = GetLocation(spawn, "Quaint Village");
-            Assert.Equal(GetLocation(spawn, "Old Farmstead"), quaintVillage.Go(Direction.North));
+            var quaintVillage = GetLocation(spawn, "QuaintVillage");
+            Assert.Equal(GetLocation(spawn, "OldFarmstead"), quaintVillage.Go(Direction.North));
         }
 
         [Fact]
@@ -41,9 +41,10 @@ namespace InteractiveFiction.Business.Tests.Existence
             var universeBuilder = new UniverseBuilder(GetEntityBuilderMockWithErogundLocations().Object);
 
             var universe = universeBuilder.Create("Erogund");
-            var child = GetLocation(universe.GetInstant().Spawn, "Misty Castle");
+            var mistyCastle = GetLocation(universe.GetInstant().Spawn, "MistyCastle");
 
-            Assert.IsType<Character>(child.Children[0]);
+            Assert.NotEmpty(mistyCastle.Children);
+            Assert.IsType<Character>(mistyCastle.Children[0]);
         }
 
         [Fact]
@@ -68,7 +69,7 @@ namespace InteractiveFiction.Business.Tests.Existence
 
             var spawn = universe.GetInstant().Spawn;
             Assert.Single(spawn.Paths);
-            var borealForest = GetLocation(spawn, "Boreal Forest");
+            var borealForest = GetLocation(spawn, "BorealForest");
             Assert.Equal(GetLocation(spawn, "Heath"), borealForest.Go(Direction.West));
         }
 
@@ -78,7 +79,7 @@ namespace InteractiveFiction.Business.Tests.Existence
             var universeBuilder = new UniverseBuilder(GetEntityBuilderMockWithArboraLocations().Object);
 
             var universe = universeBuilder.Create("Arbora");
-            var child = GetLocation(universe.GetInstant().Spawn, "Kobold Den");
+            var child = GetLocation(universe.GetInstant().Spawn, "KoboldDen");
 
             Assert.IsType<Character>(child.Children[0]);
         }
@@ -113,36 +114,37 @@ namespace InteractiveFiction.Business.Tests.Existence
             return found;
         }
 
-
         private Mock<IEntityBuilderFactory> GetEntityBuilderMockWithArboraLocations()
         {
-            var locationBuilder = new Mock<IEntityBuilder>();
+            var builder = new Mock<IEntityBuilder>();
 
-            SetupLocationForBuilder(locationBuilder, "Kobold Den", new List<string>() { "Kobold" });
-            SetupLocationForBuilder(locationBuilder, "Boreal Forest");
-            SetupLocationForBuilder(locationBuilder, "Heath");
-            SetupLocationForBuilder(locationBuilder, "Old Forest");
-            SetupLocationForBuilder(locationBuilder, "Ruined Village");
-            SetupLocationForBuilder(locationBuilder, "Arbora");
-            SetupLocationForBuilder(locationBuilder, "Spawn");
+            SetupLocationForBuilder(builder, "Arbora", "KoboldDen", new List<string>() { "Kobold" });
+            SetupLocationForBuilder(builder, "Arbora", "BorealForest");
+            SetupLocationForBuilder(builder, "Arbora", "Heath");
+            SetupLocationForBuilder(builder, "Arbora", "OldForest");
+            SetupLocationForBuilder(builder, "Arbora", "RuinedVillage");
+            SetupLocationForBuilder(builder, "Arbora", "Spawn");
+            SetupLocationForBuilder(builder, "Arbora", "Arbora");
+            SetupCharacterForBuilder(builder, "Kobold");
 
-            return DefaultMocks.GetEntityBuilderFactoryMock(locationBuilder);
+            return DefaultMocks.GetEntityBuilderFactoryMock(builder);
         }
 
         private Mock<IEntityBuilderFactory> GetEntityBuilderMockWithErogundLocations()
         {
-            var locationBuilder = new Mock<IEntityBuilder>();
+            var builder = new Mock<IEntityBuilder>();
 
-            SetupLocationForBuilder(locationBuilder, "Misty Castle", new List<string>() { "KingLeon" });
-            SetupLocationForBuilder(locationBuilder, "Old Farmstead");
-            SetupLocationForBuilder(locationBuilder, "Quaint Village");
-            SetupLocationForBuilder(locationBuilder, "Erogund");
-            SetupLocationForBuilder(locationBuilder, "Spawn");
+            SetupLocationForBuilder(builder, "Erogund", "MistyCastle", new List<string>() { "KingLeon" });
+            SetupLocationForBuilder(builder, "Erogund", "OldFarmstead");
+            SetupLocationForBuilder(builder, "Erogund", "QuaintVillage");
+            SetupLocationForBuilder(builder, "Erogund", "Spawn");
+            SetupLocationForBuilder(builder, "Erogund", "Erogund");
+            SetupCharacterForBuilder(builder, "KingLeon");
 
-            return DefaultMocks.GetEntityBuilderFactoryMock(locationBuilder);
+            return DefaultMocks.GetEntityBuilderFactoryMock(builder);
         }
 
-        private void SetupLocationForBuilder(Mock<IEntityBuilder> locationBuilder, string name, List<string>? entityNames = null)
+        private static void SetupLocationForBuilder(Mock<IEntityBuilder> locationBuilder, string path, string name, List<string>? entityNames = null)
         {
             var nestedBuilder = new Mock<IEntityBuilder>();
             nestedBuilder.Setup(_ => _.Build()).Returns(
@@ -151,9 +153,22 @@ namespace InteractiveFiction.Business.Tests.Existence
                     Title = name,
                     EntityNames = entityNames ?? new List<string>()
                 });
+            locationBuilder
+                .Setup(_ => _.From(It.Is<string>(_ => _.Contains(path + "/" + name))))
+                .Returns(nestedBuilder.Object);
+        }
+
+        private static void SetupCharacterForBuilder(Mock<IEntityBuilder> locationBuilder, string name)
+        {
+            var nestedBuilder = new Mock<IEntityBuilder>();
+            nestedBuilder.Setup(_ => _.Build()).Returns(
+                new Character(DefaultMocks.GetProcedureBuilderMock().Object)
+                {
+                    Name = name,
+                });
 
             locationBuilder
-                .Setup(_ => _.FromLines(It.Is<IEnumerable<string>>(_ => _.Any(_ => _.Contains("Title:" + name)))))
+                .Setup(_ => _.From(It.Is<string>(_ => _.Contains("Entity/" + name))))
                 .Returns(nestedBuilder.Object);
         }
     }

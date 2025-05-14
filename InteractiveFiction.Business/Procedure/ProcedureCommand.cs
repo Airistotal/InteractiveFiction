@@ -1,6 +1,4 @@
-﻿using InteractiveFiction.Business.Procedure.Argument;
-
-namespace InteractiveFiction.Business.Procedure
+﻿namespace InteractiveFiction.Business.Procedure
 {
     public class ProcedureCommand
     {

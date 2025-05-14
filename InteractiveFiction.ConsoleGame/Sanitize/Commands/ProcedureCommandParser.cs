@@ -40,6 +40,7 @@ namespace InteractiveFiction.ConsoleGame.Sanitize.Commands
             {
                 "l" or "look" => ProcedureType.Look,
                 "m" or "move" => ProcedureType.Move,
+                "atk" or "attack" => ProcedureType.Attack,
                 _ => ProcedureType.NULL,
             };
         }

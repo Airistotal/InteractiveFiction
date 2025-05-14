@@ -2,11 +2,11 @@
 using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
+using InteractiveFiction.Business.Procedure.Investigate;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 
-namespace InteractiveFiction.Business.Tests.Procedure
+namespace InteractiveFiction.Business.Tests.Procedure.Investigate
 {
     public class LookProcedureTests
     {
@@ -14,8 +14,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
         public void WhenLookHere_NoArgs_LooksAtCurrentLocation()
         {
             var location = GetLocationWithConnections();
-            var agent = new Mock<IEntity>();
-            agent.Setup(_ => _.GetLocation()).Returns(location);
+            var agent = GetAgent(location);
             var sut = new LookProcedure(agent.Object);
 
             sut.With(new List<IProcedureArg>() { }).Perform();
@@ -27,8 +26,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
         public void WhenLookHere_LooksAtCurrentLocation()
         {
             var location = GetLocationWithConnections();
-            var agent = new Mock<IEntity>();
-            agent.Setup(_ => _.GetLocation()).Returns(location);
+            var agent = GetAgent(location);
             var sut = new LookProcedure(agent.Object);
 
             sut.With(new List<IProcedureArg>() { new LookArg(Direction.NULL, "") }).Perform();
@@ -40,8 +38,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
         public void WhenLookDirection_LooksAtThatLocation()
         {
             var location = GetLocationWithConnections();
-            var agent = new Mock<IEntity>();
-            agent.Setup(_ => _.GetLocation()).Returns(location);
+            var agent = GetAgent(location);
             var sut = new LookProcedure(agent.Object);
 
             sut.With(new List<IProcedureArg>() { new LookArg(Direction.North, "") }).Perform();
@@ -53,8 +50,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
         public void WhenLookAtTargetHere_LooksHereAtTarget()
         {
             var location = GetLocationWithConnections();
-            var agent = new Mock<IEntity>();
-            agent.Setup(_ => _.GetLocation()).Returns(location);
+            var agent = GetAgent(location);
             var sut = new LookProcedure(agent.Object);
 
             sut.With(new List<IProcedureArg>() { new LookArg(Direction.NULL, "loc child") }).Perform();
@@ -66,8 +62,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
         public void WhenLookAtTargetNorth_LooksThereAtTarget()
         {
             var location = GetLocationWithConnections();
-            var agent = new Mock<IEntity>();
-            agent.Setup(_ => _.GetLocation()).Returns(location);
+            var agent = GetAgent(location);
             var sut = new LookProcedure(agent.Object);
 
             sut.With(new List<IProcedureArg>() { new LookArg(Direction.North, "loc child 2") }).Perform();
@@ -78,9 +73,15 @@ namespace InteractiveFiction.Business.Tests.Procedure
         [Fact]
         public void WhenLook_WithoutTarget_ThrowsException()
         {
-            var sut = new LookProcedure(new Mock<IEntity>().Object);
+            var sut = new LookProcedure(new Mock<IEntity>().As<IAgent>().Object);
 
             Assert.Throws<ProcedureException>(() => sut.Perform());
+        }
+
+        [Fact]
+        public void WhenLook_NotAsEntity_ThrowsException()
+        {
+            Assert.Throws<Exception>(() => new LookProcedure(new Mock<IAgent>().Object));
         }
 
         private Location GetLocationWithConnections()
@@ -106,6 +107,14 @@ namespace InteractiveFiction.Business.Tests.Procedure
             loc.Children.Add(locChild.Object);
 
             return loc;
+        }
+
+        public Mock<IAgent> GetAgent(Location location)
+        {
+            var entity = new Mock<IEntity>();
+            entity.Setup(_ => _.GetLocation()).Returns(location);
+
+            return entity.As<IAgent>();
         }
     }
 }

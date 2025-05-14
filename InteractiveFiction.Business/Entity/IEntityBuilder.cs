@@ -2,7 +2,8 @@
 {
     public interface IEntityBuilder
     {
-        IEntityBuilder FromLines(IEnumerable<string> lines);
+        IEntityBuilder From(string path);
+        IEntityBuilder Character(string? name);
         IEntity Build();
     }
 }

@@ -2,6 +2,7 @@
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO.Abstractions;
 
 namespace InteractiveFiction.Business.Infrastructure
 {
@@ -17,7 +18,8 @@ namespace InteractiveFiction.Business.Infrastructure
                 .AddSingleton<IEntityBuilderFactory, EntityBuilderFactory>()
                 .AddSingleton<IUniverseBuilder, UniverseBuilder>()
                 .AddSingleton<IProcedureBuilder, ProcedureBuilder>()
-                .AddSingleton(_ => MessageBus.MessageBus.GetMessageBus());
+                .AddSingleton(_ => MessageBus.MessageBus.GetMessageBus())
+                .AddSingleton<IFileSystem, FileSystem>();
 
             return service;
         }

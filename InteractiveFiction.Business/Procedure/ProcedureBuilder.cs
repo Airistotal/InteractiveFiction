@@ -1,43 +1,47 @@
 ﻿using InteractiveFiction.Business.Entity;
 using System.Diagnostics.CodeAnalysis;
+using InteractiveFiction.Business.Procedure.Combat;
+using InteractiveFiction.Business.Procedure.Investigate;
+using InteractiveFiction.Business.Procedure.Movement;
 
 namespace InteractiveFiction.Business.Procedure
 {
     public class ProcedureBuilder : IProcedureBuilder
     {
-        private ProcedureType Type;
-        private IEntity? Agent;
+        private ProcedureType BuildType;
+        private IAgent? BuildAgent;
 
-        public IProcedureBuilder type(ProcedureType type)
+        public IProcedureBuilder Type(ProcedureType type)
         {
-            Type = type;
+            BuildType = type;
 
             return this;
         }
 
-        public IProcedureBuilder agent(IEntity agent)
+        public IProcedureBuilder Agent(IAgent agent)
         {
-            Agent = agent;
+            BuildAgent = agent;
 
             return this;
         }
 
-        public IProcedure build()
+        public IProcedure Build()
         {
             CheckAgent();
 
-            return Type switch
+            return BuildType switch
             {
-                ProcedureType.Look => new LookProcedure(Agent),
-                ProcedureType.Move => new MoveProcedure(Agent),
+                ProcedureType.Look => new LookProcedure(BuildAgent),
+                ProcedureType.Move => new MoveProcedure(BuildAgent),
+                ProcedureType.Attack => new AttackProcedure(BuildAgent),
                 _ => new NullProcedure(),
             };
         }
 
-        [MemberNotNull(nameof(Agent))]
+        [MemberNotNull(nameof(BuildAgent))]
         private void CheckAgent()
         {
-            if (Agent == null)
+            if (BuildAgent == null)
             {
                 throw new ProcedureException("Unable to build procedure without agent");
             }

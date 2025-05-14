@@ -95,7 +95,7 @@ namespace InteractiveFiction.Business.Existence
                 throw new Exception("Unable to load location " + fileLocation);
             }
 
-            var location = (Location)entityBuilderFactory.GetBuilder().FromLines(File.ReadLines(fileLocation)).Build();
+            var location = (Location)entityBuilderFactory.GetBuilder().From(fileLocation).Build();
 
             LoadEntities(location);
 
@@ -118,7 +118,7 @@ namespace InteractiveFiction.Business.Existence
                 throw new Exception("Unable to load entity " + fileLocation);
             }
 
-            return entityBuilderFactory.GetBuilder().FromLines(File.ReadLines(fileLocation)).Build();
+            return entityBuilderFactory.GetBuilder().From(fileLocation).Build();
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Infrastructure;
-using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 
 namespace InteractiveFiction.Business.Entity.Locations
 {
@@ -124,41 +122,6 @@ namespace InteractiveFiction.Business.Entity.Locations
             }
         }
 
-        public void Perform(ProcedureType type, List<IProcedureArg> args)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ArchiveEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddEvent(string evt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetLocation(Location location)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Location GetLocation()
-        {
-            return this;
-        }
-
-        public void SetUniverse(IUniverse universe)
-        {
-            Universe = universe;
-        }
-
-        public List<string> GetNewEvents()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool Is(string id)
         {
             return
@@ -182,6 +145,21 @@ namespace InteractiveFiction.Business.Entity.Locations
         public string GetName()
         {
             return Title ?? "";
+        }
+
+        public void SetLocation(Location location)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetUniverse(IUniverse universe)
+        {
+            this.Universe = universe;
+        }
+
+        public Location GetLocation()
+        {
+            return this;
         }
     }
 }

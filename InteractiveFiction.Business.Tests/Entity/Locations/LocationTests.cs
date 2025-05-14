@@ -131,7 +131,7 @@ namespace InteractiveFiction.Business.Tests.Entity.Locations
             Assert.Equal(NullEntity.Instance, found);
         }
 
-        private Location GetLocation()
+        private static Location GetLocation()
         {
             return new Location(DefaultMocks.GetTextDecorator().Object);
         }

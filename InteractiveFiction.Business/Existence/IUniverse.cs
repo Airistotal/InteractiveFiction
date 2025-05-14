@@ -9,6 +9,6 @@ namespace InteractiveFiction.Business.Existence
         void Put(IProcedure procedure);
         void RegisterLaw(ILaw law);
         void Tick();
-        void Spawn(IEntity entity);
+        void Spawn(IAgent entity);
     }
 }

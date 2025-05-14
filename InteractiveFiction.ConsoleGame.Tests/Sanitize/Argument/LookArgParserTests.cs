@@ -1,6 +1,5 @@
-﻿using InteractiveFiction.Business.Entity;
-using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Procedure.Argument;
+﻿using InteractiveFiction.Business.Existence;
+using InteractiveFiction.Business.Procedure.Investigate;
 using InteractiveFiction.ConsoleGame.Sanitize.Argument;
 
 namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Argument
@@ -33,22 +32,9 @@ namespace InteractiveFiction.ConsoleGame.Tests.Sanitize.Argument
                 var parsed = sut.Parse(input.Split(" ").ToList());
 
                 Assert.NotEmpty(parsed);
-                var lkParsed = AssertIsLookArg(parsed[0]);
+                var lkParsed = ArgCastUtils.AssertCastArg<LookArg>(parsed[0]);
                 Assert.Equal(arg.Direction, lkParsed.Direction);
                 Assert.Equal(arg.TargetName, lkParsed.TargetName);
-            }
-        }
-
-        private static LookArg AssertIsLookArg(IProcedureArg arg)
-        {
-            Assert.IsType<LookArg>(arg);
-
-            if (arg is LookArg lkArg)
-            {
-                return lkArg;
-            } else
-            {
-                throw new Exception("FATAL");
             }
         }
     }

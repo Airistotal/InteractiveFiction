@@ -1,6 +1,7 @@
 ﻿using InteractiveFiction.Business.Entity;
 using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Procedure.Argument;
+using InteractiveFiction.Business.Procedure;
+using InteractiveFiction.Business.Procedure.Movement;
 
 namespace InteractiveFiction.ConsoleGame.Sanitize.Argument
 {

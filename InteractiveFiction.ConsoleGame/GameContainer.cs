@@ -17,6 +17,7 @@ namespace InteractiveFiction.ConsoleGame
 
         private IUniverse? universe;
         private IEntity? character;
+        private IAgent? characterAgent;
 
         public GameContainer(
             IMessageBus messageBus,
@@ -50,12 +51,15 @@ namespace InteractiveFiction.ConsoleGame
         {
             if (message is CharacterInfoSelected characterInfo)
             {
-                character = entityBuilder.FromLines(
-                    new List<string>() {
-                        "Type:" + EntityType.CHARACTER,
-                        "Name:" + characterInfo.Name,
-                        $"DefaultCapabilities:{ProcedureType.Look}"
-                    }).Build();
+                character = entityBuilder.Character(characterInfo.Name).Build();
+                
+                if (character is IAgent characterAgent)
+                {
+                    this.characterAgent = characterAgent;
+                } else
+                {
+                    throw new Exception("The created entity must also be an agent.");
+                }
             }
 
             MoveToGameIfReady();
@@ -63,9 +67,9 @@ namespace InteractiveFiction.ConsoleGame
 
         private void MoveToGameIfReady()
         {
-            if (universe != null && character != null)
+            if (universe != null && characterAgent != null)
             {
-                universe.Spawn(character);
+                universe.Spawn(characterAgent);
                 messageBus.Publish(new MoveToGameMessage());
             }
         }
@@ -74,8 +78,8 @@ namespace InteractiveFiction.ConsoleGame
         {
             CheckIsReady();
 
-            var events = character.GetNewEvents();
-            character.ArchiveEvents();
+            var events = characterAgent.GetNewEvents();
+            characterAgent.ArchiveEvents();
 
             return string.Join(Environment.NewLine, events);
         }
@@ -86,14 +90,15 @@ namespace InteractiveFiction.ConsoleGame
 
             var procedureCommand = procedureCommandParser.Parse(input);
 
-            character.Perform(procedureCommand.ProcedureType, procedureCommand.Args);
+            characterAgent.Perform(procedureCommand.ProcedureType, procedureCommand.Args);
         }
 
         [MemberNotNull(nameof(character))]
+        [MemberNotNull(nameof(characterAgent))]
         [MemberNotNull(nameof(universe))]
         private void CheckIsReady()
         {
-            if (universe == null || character == null)
+            if (universe == null || character == null || characterAgent == null)
             {
                 throw new Exception("No character or universe!");
             }

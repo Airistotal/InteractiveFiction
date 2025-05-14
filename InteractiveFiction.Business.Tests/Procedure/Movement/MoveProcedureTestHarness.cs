@@ -2,22 +2,25 @@
 using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
 using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
+using InteractiveFiction.Business.Procedure.Movement;
 using InteractiveFiction.Business.Tests.Utils;
 using Moq;
 using System.Diagnostics.CodeAnalysis;
 
-namespace InteractiveFiction.Business.Tests.Procedure
+namespace InteractiveFiction.Business.Tests.Procedure.Movement
 {
-    public class MoveProcedureTestHarness {
-        private Mock<IEntity> Agent;
+    public class MoveProcedureTestHarness
+    {
+        private Mock<IAgent> Agent;
+        private Mock<IEntity> Entity;
         private readonly Location Origin;
         private readonly Location Destination;
         private Direction? Direction;
 
         public MoveProcedureTestHarness()
         {
-            Agent = new Mock<IEntity>();
+            Agent = new Mock<IAgent>();
+            Entity = Agent.As<IEntity>();
             Origin = new Location(DefaultMocks.GetTextDecorator().Object);
             Destination = new Location(DefaultMocks.GetTextDecorator().Object)
             {
@@ -25,12 +28,12 @@ namespace InteractiveFiction.Business.Tests.Procedure
                 Description = "The other one"
             };
 
-            Agent.Setup(_ => _.GetLocation()).Returns(Origin);
+            Entity.Setup(_ => _.GetLocation()).Returns(Origin);
         }
 
         public MoveProcedureTestHarness WithDestination(Direction direction)
         {
-            Origin.Children.Add(Agent.Object);
+            Origin.Children.Add(Entity.Object);
             Origin.AddPath(direction, Destination);
             Direction = direction;
 
@@ -39,7 +42,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
 
         public MoveProcedureTestHarness WithoutDestination(Direction direction)
         {
-            Origin.Children.Add(Agent.Object);
+            Origin.Children.Add(Entity.Object);
             Direction = direction;
 
             return this;
@@ -47,7 +50,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
 
         public MoveProcedureTestHarness WithoutAgent()
         {
-            Origin.Children.Remove(Agent.Object);
+            Origin.Children.Remove(Entity.Object);
 
             return this;
         }
@@ -65,7 +68,8 @@ namespace InteractiveFiction.Business.Tests.Procedure
             if (withMvArg)
             {
                 return new MoveArg(Direction.Value);
-            } else
+            }
+            else
             {
                 return new Mock<IProcedureArg>().Object;
             }
@@ -76,7 +80,7 @@ namespace InteractiveFiction.Business.Tests.Procedure
         [MemberNotNull(nameof(Destination))]
         private void CheckMovement()
         {
-            if (Direction == null || Origin == null || 
+            if (Direction == null || Origin == null ||
                 Destination == null)
             {
                 throw new Exception("Not enough info!");
@@ -88,16 +92,16 @@ namespace InteractiveFiction.Business.Tests.Procedure
             CheckMovement();
 
             Agent.Verify(_ => _.AddEvent(It.Is<string>(_ => _.Contains(Destination.GetFullDescription()))), Times.Once);
-            Agent.Verify(_ => _.SetLocation(Destination), Times.Once);
-            Assert.Contains(Agent.Object, Destination.Children);
-            Assert.DoesNotContain(Agent.Object, Origin.Children);
+            Entity.Verify(_ => _.SetLocation(Destination), Times.Once);
+            Assert.Contains(Entity.Object, Destination.Children);
+            Assert.DoesNotContain(Entity.Object, Origin.Children);
         }
 
         public void AssertUnmoved()
         {
             Agent.Verify(_ => _.AddEvent(It.Is<string>(_ => _.Contains("can't go"))));
-            Agent.Verify(_ => _.SetLocation(It.IsAny<Location>()), Times.Never);
-            Assert.Contains(Agent.Object, Origin.Children);
+            Entity.Verify(_ => _.SetLocation(It.IsAny<Location>()), Times.Never);
+            Assert.Contains(Entity.Object, Origin.Children);
         }
     }
 }

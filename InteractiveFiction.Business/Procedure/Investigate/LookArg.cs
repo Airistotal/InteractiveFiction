@@ -1,6 +1,6 @@
 ﻿using InteractiveFiction.Business.Existence;
 
-namespace InteractiveFiction.Business.Procedure.Argument
+namespace InteractiveFiction.Business.Procedure.Investigate
 {
     public class LookArg : IProcedureArg
     {

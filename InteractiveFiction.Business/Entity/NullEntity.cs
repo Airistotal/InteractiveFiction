@@ -1,7 +1,5 @@
 ﻿using InteractiveFiction.Business.Entity.Locations;
 using InteractiveFiction.Business.Existence;
-using InteractiveFiction.Business.Procedure;
-using InteractiveFiction.Business.Procedure.Argument;
 
 namespace InteractiveFiction.Business.Entity
 {
@@ -24,16 +22,6 @@ namespace InteractiveFiction.Business.Entity
 
         private NullEntity() { }
 
-        public void Perform(ProcedureType type, List<IProcedureArg> args) { }
-
-        public void ArchiveEvents() { }
-
-        public void AddEvent(string evt) { }
-
-        public void SetLocation(Location location) { }
-
-        public void SetUniverse(IUniverse universe) { }
-
         public bool Is(string id)
         {
             return false;
@@ -44,11 +32,6 @@ namespace InteractiveFiction.Business.Entity
             return NullLocation.Instance;
         }
 
-        public List<string> GetNewEvents()
-        {
-            return new List<string>();
-        }
-
         public string GetFullDescription()
         {
             return "This doesn't exist!";
@@ -57,6 +40,14 @@ namespace InteractiveFiction.Business.Entity
         public string GetName()
         {
             return "This doesn't exist!";
+        }
+
+        public void SetLocation(Location location)
+        {
+        }
+
+        public void SetUniverse(IUniverse universe)
+        {
         }
     }
 }

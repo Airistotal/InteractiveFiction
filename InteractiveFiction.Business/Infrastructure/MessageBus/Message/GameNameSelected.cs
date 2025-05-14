@@ -8,6 +8,6 @@ namespace InteractiveFiction.Business.Infrastructure.MessageBus.Message
 {
     public class GameNameSelected : IMessage
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }

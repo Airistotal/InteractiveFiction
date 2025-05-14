@@ -43,13 +43,14 @@ namespace InteractiveFiction.Business.Tests.Existence
                 Title = "Spawn"
             };
             var entity = new Mock<IEntity>();
+            var agent = entity.As<IAgent>();
             var universe = new Universe(spawn);
 
-            universe.Spawn(entity.Object);
+            universe.Spawn(agent.Object);
 
             entity.Verify(_ => _.SetUniverse(It.IsAny<IUniverse>()), Times.Once);
             entity.Verify(_ => _.SetLocation(It.IsAny<Location>()), Times.Once);
-            entity.Verify(_ => _.AddEvent(It.IsAny<string>()), Times.Once);
+            agent.Verify(_ => _.AddEvent(It.IsAny<string>()), Times.Once);
             Assert.Contains(entity.Object, spawn.Children);
         }
     }
